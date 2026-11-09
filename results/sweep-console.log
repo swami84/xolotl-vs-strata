@@ -1,0 +1,105 @@
+warming page cache
+A-strata: ready after 20s
+A-strata: warm-up (discarded)
+A-strata ctx=4000 pass=1: prefill 3284 tok at 1651.9 tok/s | decode 1024 tok at 139.3 tok/s | +1245-token turn on 3327 reused: 1.35 s
+A-strata ctx=4000 pass=2: prefill 3285 tok at 1661.4 tok/s | decode 1024 tok at 129.9 tok/s | +1244-token turn on 3328 reused: 1.35 s
+A-strata ctx=4000 pass=3: prefill 3282 tok at 1637.7 tok/s | decode 1024 tok at 139.5 tok/s | +1244-token turn on 3325 reused: 1.36 s
+A-strata ctx=4000 pass=4: prefill 3278 tok at 1641.9 tok/s | decode 1024 tok at 141.6 tok/s | +219-token turn on 4351 reused: 0.55 s
+A-strata ctx=4000 pass=5: prefill 3278 tok at 1634.9 tok/s | decode 1024 tok at 138.9 tok/s | +217-token turn on 4352 reused: 0.53 s
+A-strata ctx=16000 pass=1: prefill 13829 tok at 1812.4 tok/s | decode 364 tok at 129.4 tok/s | +207-token turn on 14242 reused: 0.54 s
+A-strata ctx=16000 pass=2: prefill 13829 tok at 1962.3 tok/s | decode 244 tok at 127.5 tok/s | +205-token turn on 14123 reused: 0.53 s
+A-strata ctx=16000 pass=3: prefill 13828 tok at 1947.9 tok/s | decode 245 tok at 133.2 tok/s | +203-token turn on 14123 reused: 0.53 s
+A-strata ctx=16000 pass=4: prefill 13831 tok at 1935.0 tok/s | decode 291 tok at 135.8 tok/s | +205-token turn on 14171 reused: 0.54 s
+A-strata ctx=16000 pass=5: prefill 13832 tok at 1941.0 tok/s | decode 283 tok at 123.6 tok/s | +205-token turn on 14164 reused: 0.54 s
+A-strata ctx=32000 pass=1: prefill 26713 tok at 2585.0 tok/s | decode 372 tok at 125.0 tok/s | +182-token turn on 27134 reused: 0.52 s
+A-strata ctx=32000 pass=2: FAILED: urllib.error.HTTPError: HTTP Error 400: Bad Request
+A-strata ctx=32000 pass=3: prefill 26711 tok at 2590.5 tok/s | decode 307 tok at 128.2 tok/s | +179-token turn on 27067 reused: 0.52 s
+A-strata ctx=32000 pass=4: prefill 26707 tok at 2538.2 tok/s | decode 310 tok at 126.5 tok/s | +179-token turn on 27066 reused: 0.52 s
+A-strata ctx=32000 pass=5: prefill 26706 tok at 2579.7 tok/s | decode 270 tok at 131.0 tok/s | +180-token turn on 27026 reused: 0.51 s
+A-strata ctx=64000 pass=1: prefill 53520 tok at 3172.6 tok/s | decode 1024 tok at 130.0 tok/s | +1185-token turn on 53563 reused: 1.41 s
+A-strata ctx=64000 pass=2: prefill 53511 tok at 3208.5 tok/s | decode 1024 tok at 132.4 tok/s | +1189-token turn on 53554 reused: 1.43 s
+A-strata ctx=64000 pass=3: prefill 53513 tok at 3210.5 tok/s | decode 1024 tok at 133.2 tok/s | +1190-token turn on 53556 reused: 1.38 s
+A-strata ctx=64000 pass=4: FAILED: urllib.error.HTTPError: HTTP Error 400: Bad Request
+A-strata ctx=64000 pass=5: prefill 53504 tok at 3213.1 tok/s | decode 1024 tok at 131.3 tok/s | +166-token turn on 54578 reused: 0.54 s
+./scripts/sweep.sh: line 73: 33788 Killed                  setsid "$PY" serve/server.py --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+A-strata: stopped
+B-xolotl-same: ready after 24s
+B-xolotl-same: warm-up (discarded)
+B-xolotl-same ctx=4000 pass=1: prefill 3294 tok at 1536.2 tok/s | decode 1024 tok at 165.6 tok/s | +218-token turn on 4368 reused: 0.42 s
+B-xolotl-same ctx=4000 pass=2: prefill 3295 tok at 1521.4 tok/s | decode 1024 tok at 164.3 tok/s | +220-token turn on 4369 reused: 0.41 s
+B-xolotl-same ctx=4000 pass=3: prefill 3295 tok at 1527.2 tok/s | decode 1024 tok at 164.1 tok/s | +223-token turn on 4368 reused: 0.44 s
+B-xolotl-same ctx=4000 pass=4: prefill 3295 tok at 1410.5 tok/s | decode 1024 tok at 165.6 tok/s | +223-token turn on 4369 reused: 0.44 s
+B-xolotl-same ctx=4000 pass=5: prefill 3294 tok at 1441.2 tok/s | decode 1024 tok at 160.9 tok/s | +1254-token turn on 3337 reused: 1.57 s
+B-xolotl-same ctx=16000 pass=1: prefill 13916 tok at 2643.4 tok/s | decode 1024 tok at 167.3 tok/s | +1224-token turn on 13959 reused: 1.65 s
+./scripts/sweep.sh: line 63: /home/swami/Work/Projects/deepflash_test/results/sweep/B-xolotl-same/16000-2.json: No such file or directory
+B-xolotl-same ctx=16000 pass=2: FAILED: FileNotFoundError: [Errno 2] No such file or directory: '/home/swami/Work/Projects/deepflash_test/results/sweep/B-xolotl-same/16000-2.json'
+./scripts/sweep.sh: line 63: /home/swami/Work/Projects/deepflash_test/results/sweep/B-xolotl-same/16000-3.json: No such file or directory
+B-xolotl-same ctx=16000 pass=3: FAILED: FileNotFoundError: [Errno 2] No such file or directory: '/home/swami/Work/Projects/deepflash_test/results/sweep/B-xolotl-same/16000-3.json'
+./scripts/sweep.sh: line 63: /home/swami/Work/Projects/deepflash_test/results/sweep/B-xolotl-same/16000-4.json: No such file or directory
+B-xolotl-same ctx=16000 pass=4: FAILED: FileNotFoundError: [Errno 2] No such file or directory: '/home/swami/Work/Projects/deepflash_test/results/sweep/B-xolotl-same/16000-4.json'
+./scripts/sweep.sh: line 63: /home/swami/Work/Projects/deepflash_test/results/sweep/B-xolotl-same/16000-5.json: No such file or directory
+B-xolotl-same ctx=16000 pass=5: FAILED: FileNotFoundError: [Errno 2] No such file or directory: '/home/swami/Work/Projects/deepflash_test/results/sweep/B-xolotl-same/16000-5.json'
+B-xolotl-same ctx=32000 pass=1: prefill 26809 tok at 3253.3 tok/s | decode 1024 tok at 174.2 tok/s | +1203-token turn on 26852 reused: 1.61 s
+B-xolotl-same ctx=32000 pass=2: prefill 26810 tok at 3249.5 tok/s | decode 1024 tok at 174.4 tok/s | +1203-token turn on 26853 reused: 1.71 s
+B-xolotl-same ctx=32000 pass=3: prefill 26809 tok at 3239.1 tok/s | decode 1024 tok at 174.4 tok/s | +1206-token turn on 26852 reused: 1.69 s
+B-xolotl-same ctx=32000 pass=4: prefill 26808 tok at 3264.4 tok/s | decode 1024 tok at 180.8 tok/s | +1209-token turn on 26851 reused: 1.56 s
+B-xolotl-same ctx=32000 pass=5: prefill 26805 tok at 3310.9 tok/s | decode 1024 tok at 178.1 tok/s | +1209-token turn on 26848 reused: 1.46 s
+B-xolotl-same ctx=64000 pass=1: prefill 53606 tok at 3993.9 tok/s | decode 1024 tok at 166.8 tok/s | +1202-token turn on 53649 reused: 1.84 s
+B-xolotl-same ctx=64000 pass=2: prefill 53603 tok at 3898.7 tok/s | decode 1024 tok at 158.8 tok/s | +1199-token turn on 53646 reused: 1.84 s
+B-xolotl-same ctx=64000 pass=3: prefill 53606 tok at 3876.7 tok/s | decode 1024 tok at 160.9 tok/s | +176-token turn on 54679 reused: 0.43 s
+B-xolotl-same ctx=64000 pass=4: prefill 53606 tok at 3892.3 tok/s | decode 1024 tok at 160.0 tok/s | +1201-token turn on 53649 reused: 1.79 s
+B-xolotl-same ctx=64000 pass=5: prefill 53606 tok at 3940.1 tok/s | decode 1024 tok at 171.5 tok/s | +1209-token turn on 53649 reused: 1.53 s
+./scripts/sweep.sh: line 73: 39500 Killed                  setsid "$PY" serve/server.py --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+B-xolotl-same: stopped
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/home/swami/Work/Projects/deepflash_test/configs/C-xolotl-tuned.json'
+C-xolotl-tuned: server died
+Traceback (most recent call last):
+  File "/home/swami/Work/Projects/Xolotl/serve/server.py", line 11179, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/swami/Work/Projects/Xolotl/serve/server.py", line 10603, in main
+    config_bytes = Path(a.config).read_bytes() if a.config else b""
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/swami/Work/Projects/deepflash_test/results/sweep/C-xolotl-tuned/config.json'
+== rerun after folder rename: B at 16K, then C
+B-xolotl-same: ready after 26s
+B-xolotl-same: warm-up (discarded)
+B-xolotl-same ctx=16000 pass=1: prefill 13938 tok at 2692.4 tok/s | decode 1024 tok at 171.6 tok/s | +1223-token turn on 13981 reused: 1.65 s
+B-xolotl-same ctx=16000 pass=2: prefill 13936 tok at 2686.0 tok/s | decode 1024 tok at 178.6 tok/s | +1221-token turn on 13979 reused: 1.62 s
+B-xolotl-same ctx=16000 pass=3: prefill 13939 tok at 2668.5 tok/s | decode 1024 tok at 176.4 tok/s | +1220-token turn on 13982 reused: 1.65 s
+B-xolotl-same ctx=16000 pass=4: prefill 13937 tok at 2691.3 tok/s | decode 1024 tok at 181.1 tok/s | +1224-token turn on 13980 reused: 1.65 s
+B-xolotl-same ctx=16000 pass=5: prefill 13936 tok at 2639.5 tok/s | decode 1024 tok at 184.5 tok/s | +1221-token turn on 13979 reused: 1.5 s
+./scripts/sweep.sh: line 73: 48117 Killed                  setsid "$PY" serve/server.py --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+B-xolotl-same: stopped
+C-xolotl-tuned: ready after 22s
+C-xolotl-tuned: warm-up (discarded)
+C-xolotl-tuned ctx=4000 pass=1: prefill 3334 tok at 1565.5 tok/s | decode 1024 tok at 155.8 tok/s | +1261-token turn on 3377 reused: 1.56 s
+C-xolotl-tuned ctx=4000 pass=2: prefill 3334 tok at 1564.0 tok/s | decode 1024 tok at 164.6 tok/s | +1261-token turn on 3377 reused: 1.54 s
+C-xolotl-tuned ctx=4000 pass=3: prefill 3335 tok at 1568.2 tok/s | decode 1024 tok at 165.0 tok/s | +1260-token turn on 3378 reused: 1.56 s
+C-xolotl-tuned ctx=4000 pass=4: prefill 3333 tok at 1552.1 tok/s | decode 1024 tok at 173.5 tok/s | +1260-token turn on 3376 reused: 1.56 s
+C-xolotl-tuned ctx=4000 pass=5: prefill 3335 tok at 1542.5 tok/s | decode 1024 tok at 172.6 tok/s | +1256-token turn on 3378 reused: 1.5 s
+C-xolotl-tuned ctx=16000 pass=1: prefill 13941 tok at 2654.2 tok/s | decode 1024 tok at 171.4 tok/s | +1230-token turn on 13984 reused: 1.62 s
+C-xolotl-tuned ctx=16000 pass=2: prefill 13941 tok at 2729.3 tok/s | decode 1024 tok at 173.0 tok/s | +1238-token turn on 13984 reused: 1.62 s
+C-xolotl-tuned ctx=16000 pass=3: prefill 13941 tok at 2755.8 tok/s | decode 1024 tok at 168.3 tok/s | +1225-token turn on 13984 reused: 1.66 s
+C-xolotl-tuned ctx=16000 pass=4: prefill 13938 tok at 2731.5 tok/s | decode 1024 tok at 175.8 tok/s | +1234-token turn on 13981 reused: 1.59 s
+C-xolotl-tuned ctx=16000 pass=5: prefill 13938 tok at 2766.7 tok/s | decode 1024 tok at 166.4 tok/s | +1231-token turn on 13981 reused: 1.56 s
+C-xolotl-tuned ctx=32000 pass=1: prefill 26805 tok at 3390.2 tok/s | decode 1024 tok at 172.0 tok/s | +1219-token turn on 26848 reused: 1.64 s
+C-xolotl-tuned ctx=32000 pass=2: prefill 26806 tok at 3289.2 tok/s | decode 1024 tok at 174.1 tok/s | +1213-token turn on 26849 reused: 1.75 s
+C-xolotl-tuned ctx=32000 pass=3: prefill 26805 tok at 3141.0 tok/s | decode 1024 tok at 174.5 tok/s | +1215-token turn on 26848 reused: 1.69 s
+C-xolotl-tuned ctx=32000 pass=4: prefill 26804 tok at 3225.4 tok/s | decode 1024 tok at 172.1 tok/s | +1209-token turn on 26847 reused: 1.6 s
+C-xolotl-tuned ctx=32000 pass=5: prefill 26809 tok at 3191.5 tok/s | decode 1024 tok at 164.6 tok/s | +1204-token turn on 26852 reused: 1.46 s
+C-xolotl-tuned ctx=64000 pass=1: prefill 53594 tok at 3895.4 tok/s | decode 1024 tok at 163.2 tok/s | +1198-token turn on 53637 reused: 1.95 s
+C-xolotl-tuned ctx=64000 pass=2: prefill 53591 tok at 3757.7 tok/s | decode 1024 tok at 157.3 tok/s | +1204-token turn on 53634 reused: 1.88 s
+C-xolotl-tuned ctx=64000 pass=3: prefill 53590 tok at 3651.6 tok/s | decode 1024 tok at 159.6 tok/s | +1214-token turn on 53633 reused: 1.85 s
+C-xolotl-tuned ctx=64000 pass=4: prefill 53587 tok at 3776.6 tok/s | decode 1024 tok at 158.6 tok/s | +1204-token turn on 53630 reused: 1.88 s
+C-xolotl-tuned ctx=64000 pass=5: prefill 53583 tok at 3680.6 tok/s | decode 1024 tok at 149.0 tok/s | +1205-token turn on 53626 reused: 1.72 s
+./scripts/sweep.sh: line 73: 49868 Killed                  setsid "$PY" serve/server.py --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+C-xolotl-tuned: stopped

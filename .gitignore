@@ -2,3 +2,4 @@
 deepflash.sh
 *.server.out
 __pycache__/
+.venv/
