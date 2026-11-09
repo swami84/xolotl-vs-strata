@@ -1,0 +1,4 @@
+.claude/
+deepflash.sh
+*.server.out
+__pycache__/

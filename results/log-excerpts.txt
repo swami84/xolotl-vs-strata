@@ -1,0 +1,43 @@
+Engine log lines kept from the 2026-11-07 runs (verbatim). The full logs were lost when the temp folder was cleared.
+
+== A-strata (Strata 0.1.39) ==
+strata generate: layer split auto: K=21 - predicted 25.1 ms per decode window; the caches hold 18796 of 24576 profiled pairs (~99.2% of the routed mass)
+strata generate: PLE on, table 320001536 rows of .../Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf
+strata mtp: draft layer loaded, 835 MiB of VRAM (experts 675, dense 111), files read in 0.99 s (797 MiB/s)
+strata generate: loaded 46.84 GiB at 1.86 GiB/s
+strata generate: pre-filled 10039 of 10039 slots from the profile; slot 0 verified
+strata generate: layer split: CUDA1 runs layers 21-47, expert cache 8543 slots (17.00 GiB), 8543 of its 13824 profiled pairs; slot 0 verified
+strata serve: prompt 13796 tokens = 0 reused + 13796 read in 7415 ms (1860.6 tok/s), 1 generated in 27 ms (37.4 tok/s), drafts accepted 0 of 0, 2 checkpoints
+strata serve: prompt 13846 tokens = 13796 reused + 50 read in 326 ms (153.6 tok/s), 335 generated in 2792 ms (120.0 tok/s), drafts accepted 224 of 287, 3 checkpoints
+strata serve: prompt 14380 tokens = 14180 reused + 200 read in 553 ms (361.8 tok/s), 1 generated in 13 ms (79.2 tok/s), drafts accepted 0 of 0, 4 checkpoints
+strata serve: prompt 13798 tokens = 0 reused + 13798 read in 6728 ms (2051.0 tok/s), 1 generated in 12 ms (80.2 tok/s), drafts accepted 0 of 0, 2 checkpoints
+strata serve: prompt 13848 tokens = 13798 reused + 50 read in 312 ms (160.5 tok/s), 312 generated in 2300 ms (135.6 tok/s), drafts accepted 210 of 251, 3 checkpoints
+strata serve: prompt 14358 tokens = 14159 reused + 199 read in 546 ms (364.3 tok/s), 1 generated in 13 ms (76.3 tok/s), drafts accepted 0 of 0, 4 checkpoints
+
+== B-xolotl-same (Xolotl 8486ead, same args) ==
+strata generate: 1466 MiB of weights loaded from .../packs/iq3_s in 0.3 s (302 canonical tensors skipped: served natively)
+strata generate: 300 native projection matrices, 2018.88 MiB of weights, in 0.5 s
+strata generate: --ple-io ram chosen by the residency policy (the table is 26.8 GiB, the expert arena still to fill 46.8 GiB and 485.4 GiB of RAM is available; STRATA_PLE_AUTO_RAM=0 keeps the direct reads, --ple-io direct forces them)
+strata generate: PLE table locked in RAM (--ple-io ram chosen by the residency policy) in 15.2 s
+strata generate: layer split auto: K=25 - predicted 26.6 ms per decode window; the caches hold 18608 of 24576 profiled pairs (~98.5% of the routed mass), best of 46 placements
+strata mtp: draft layer loaded, 835 MiB of VRAM (experts 675, dense 111), files read in 0.59 s (1329 MiB/s)
+strata generate: loaded 46.84 GiB at 15.25 GiB/s
+strata generate: pre-filled 9758 of 9758 slots from the profile in 0.9 s (21609 MB/s); slot 0 verified
+strata generate: layer split: CUDA1 runs layers 25-47, expert cache 8444 slots (16.99 GiB), 8444 of its 11776 profiled pairs; slot 0 verified
+strata serve: prompt 13935 tokens = 13885 reused + 50 read in 273 ms (183.3 tok/s), 1024 generated in 6178 ms (165.8 tok/s), drafts accepted 716 of 890, 2 checkpoints
+strata serve: prompt 15155 tokens = 13928 reused + 1227 read in 1645 ms (745.8 tok/s), 1 generated in 11 ms (88.2 tok/s), drafts accepted 0 of 0, 3 checkpoints
+strata serve: prompt 13885 tokens = 0 reused + 13885 read in 5198 ms (2671.2 tok/s), 1 generated in 11 ms (91.3 tok/s), drafts accepted 0 of 0, 1 checkpoints
+strata serve: prompt 13935 tokens = 13885 reused + 50 read in 270 ms (185.0 tok/s), 1024 generated in 5598 ms (182.9 tok/s), drafts accepted 729 of 863, 2 checkpoints
+strata serve: prompt 15157 tokens = 13928 reused + 1229 read in 1657 ms (741.6 tok/s), 1 generated in 11 ms (91.4 tok/s), drafts accepted 0 of 0, 3 checkpoints
+
+== C-xolotl-tuned (Xolotl 8486ead, --ple-io direct + route-resident env) ==
+strata generate: 1466 MiB of weights loaded from .../packs/iq3_s in 0.3 s (302 canonical tensors skipped: served natively)
+strata generate: 300 native projection matrices, 2018.88 MiB of weights, in 0.5 s
+strata generate: PLE direct read probe: 57367 rows/s (fine)
+strata generate: layer split auto: K=25 - predicted 26.6 ms per decode window; the caches hold 18608 of 24576 profiled pairs (~98.5% of the routed mass), best of 46 placements
+strata mtp: draft layer loaded, 835 MiB of VRAM (experts 675, dense 111), files read in 0.58 s (1347 MiB/s)
+strata generate: loaded 46.84 GiB at 15.38 GiB/s
+strata generate: pre-filled 9771 of 9771 slots from the profile in 0.9 s (21615 MB/s); slot 0 verified
+strata generate: layer split: CUDA1 runs layers 25-47, expert cache 8444 slots (16.99 GiB), 8444 of its 11776 profiled pairs; slot 0 verified
+strata serve: prompt 13930 tokens = 13880 reused + 50 read in 272 ms (183.9 tok/s), 1024 generated in 6119 ms (167.3 tok/s), drafts accepted 722 of 856, 2 checkpoints
+strata serve: prompt 13934 tokens = 13884 reused + 50 read in 269 ms (186.2 tok/s), 1024 generated in 6216 ms (164.7 tok/s), drafts accepted 680 of 870, 2 checkpoints

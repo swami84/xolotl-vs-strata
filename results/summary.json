@@ -1,0 +1,27 @@
+{
+ "_note": "Probe output of tools/throughput.py (Xolotl 8486ead), --prompt 16000 --decode 1024, transcribed from the run console on 2026-11-07. The per-run JSON files and full server logs were in a temp folder that was cleared by a reboot; the engine log lines that survive are in log-excerpts.txt.",
+ "A-strata": {
+  "engine": "Strata 0.1.39 (commit 6f32ec0)",
+  "load_s": 54,
+  "runs": [
+   {"prefill_tokens": 13796, "prefill_tok_s": 1860.6, "decode_tokens": 335, "decode_tok_s": 120.0, "drafts_accepted": "224/287", "turn_new_tokens": 200, "turn_reused": 14180, "turn_prefill_s": 0.55},
+   {"prefill_tokens": 13798, "prefill_tok_s": 2051.0, "decode_tokens": 312, "decode_tok_s": 135.6, "drafts_accepted": "210/251", "turn_new_tokens": 199, "turn_reused": 14159, "turn_prefill_s": 0.55}
+  ]
+ },
+ "B-xolotl-same": {
+  "engine": "Xolotl 8486ead, same args as A",
+  "load_s": 42,
+  "runs": [
+   {"prefill_tokens": 13885, "prefill_tok_s": 2704.8, "decode_tokens": 1024, "decode_tok_s": 165.7, "drafts_accepted": "716/890", "turn_new_tokens": 1227, "turn_reused": 13928, "turn_prefill_s": 1.65},
+   {"prefill_tokens": 13885, "prefill_tok_s": 2671.2, "decode_tokens": 1024, "decode_tok_s": 182.9, "drafts_accepted": "729/863", "turn_new_tokens": 1229, "turn_reused": 13928, "turn_prefill_s": 1.66}
+  ]
+ },
+ "C-xolotl-tuned": {
+  "engine": "Xolotl 8486ead, + --ple-io direct, STRATA_ROUTE_RESIDENT=0.8, STRATA_ROUTE_RESIDENT_RANKS=5-9",
+  "load_s": 27,
+  "runs": [
+   {"prefill_tokens": 13880, "prefill_tok_s": 2624.3, "decode_tokens": 1024, "decode_tok_s": 167.3, "drafts_accepted": "722/856", "turn_new_tokens": 1235, "turn_reused": 13923, "turn_prefill_s": 1.67},
+   {"prefill_tokens": 13884, "prefill_tok_s": 2717.3, "decode_tokens": 1024, "decode_tok_s": 164.7, "drafts_accepted": "680/870", "turn_new_tokens": 1238, "turn_reused": 13927, "turn_prefill_s": 1.63}
+  ]
+ }
+}
