@@ -34,4 +34,9 @@ done
 kill -INT -- -$P 2>/dev/null
 for _ in $(seq 1 30); do kill -0 $P 2>/dev/null || break; sleep 1; done
 kill -KILL -- -$P 2>/dev/null
+# the engine can hold its VRAM for a while after the server exits; the next run would fail to allocate
+for _ in $(seq 1 60); do
+  [ -z "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ] && break
+  sleep 1
+done
 echo "$N: stopped"

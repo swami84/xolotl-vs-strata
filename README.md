@@ -4,17 +4,16 @@
 MoE inference engine. This repo measures whether swapping Strata's engine for Xolotl's makes the same model faster
 on the same machine. The model, quant, pack, MTP draft, expert profile and flags are all unchanged.
 
-**Result:** with identical flags, Xolotl decoded about **30–36% faster** (128 → 166–174 tok/s). Its prefill was
-also 37% higher in this test, but most of that gap is probably a cold page cache in the Strata run (see
-[Caveats](#caveats)). Xolotl's recommended QFN flags did not make it faster than the identical-flags run, but they
-cut load time from 42 s to 27 s.
+**Result:** with identical flags, Xolotl was about **40% faster** at both prefill (1,889 → 2,698 tok/s) and decode
+(124 → 175 tok/s). Two sessions a day apart, one on a cold page cache and one on a warm one, gave the same picture.
+Xolotl's recommended QFN flags did not add speed on this machine.
 
 ## Setup
 
 | | |
 | --- | --- |
 | GPUs | 2x NVIDIA RTX 3090 (24 GB each), layer split across both (`"gpu": [1, 0]`, `"layer_split": "auto"`) |
-| CPU / RAM | AMD EPYC 7C13 64-core, 503 GB RAM |
+| CPU / RAM | AMD EPYC 7C13 64-core (AVX2, no AVX-512), 503 GB RAM |
 | Software | Ubuntu, kernel 6.8.0, NVIDIA driver 580.178.04, CUDA 12.8 |
 | Model | Qwen3.8-Flash-Next GSQ-RCO **IQ3_S** (125B MoE, two GGUF shards, 46.8 GiB) |
 | Strata | 0.1.39, commit `6f32ec0` (prebuilt engine from `setup.sh`) |
@@ -46,55 +45,76 @@ All speeds are the server's own timings, not wall-clock time.
 
 ## Results
 
+Main session: 8 Nov 2026. The model, pack and MTP files were read into the page cache first, so every run started
+warm.
+
 | Run | Prefill, pass 1 / 2 | Decode, pass 1 / 2 | Tokens decoded | Draft acceptance | Load |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| A: Strata | 1,861 / 2,051 tok/s | 120.0 / 135.6 tok/s | 335 / 312 | 78% / 84% | 54 s |
-| B: Xolotl, same flags | 2,705 / 2,671 tok/s | 165.7 / 182.9 tok/s | 1,024 / 1,024 | 80% / 84% | 42 s |
-| C: Xolotl, tuned | 2,624 / 2,717 tok/s | 167.3 / 164.7 tok/s | 1,024 / 1,024 | 84% / 78% | 27 s |
+| A: Strata | 1,793 / 1,984 tok/s | 115.4 / 132.5 tok/s | 348 / 594 | 73% / 81% | 24 s |
+| B: Xolotl, same flags | 2,725 / 2,671 tok/s | 165.5 / 183.6 tok/s | 1,024 / 1,024 | 81% / 81% | 30 s |
+| C: Xolotl, tuned | 2,625 / 2,676 tok/s | 163.0 / 168.1 tok/s | 1,024 / 1,024 | 80% / 78% | 27 s |
 
-Means:
+Means, with the first session for comparison:
 
-| Run | Prefill | Decode | vs A (prefill / decode) |
-| --- | ---: | ---: | ---: |
-| A | 1,956 tok/s | 127.8 tok/s | — |
-| B | 2,688 tok/s | 174.3 tok/s | +37% / +36% |
-| C | 2,671 tok/s | 166.0 tok/s | +37% / +30% |
+| Run | Prefill, warm (8 Nov) | Decode, warm (8 Nov) | Prefill, cold (7 Nov) | Decode, cold (7 Nov) |
+| --- | ---: | ---: | ---: | ---: |
+| A: Strata | 1,889 tok/s | 124.0 tok/s | 1,956 tok/s | 127.8 tok/s |
+| B: Xolotl, same flags | **2,698 tok/s (+43%)** | **174.6 tok/s (+41%)** | 2,688 tok/s (+37%) | 174.3 tok/s (+36%) |
+| C: Xolotl, tuned | 2,650 tok/s (+40%) | 165.6 tok/s (+34%) | 2,671 tok/s (+37%) | 166.0 tok/s (+30%) |
 
-Raw numbers are in [results/summary.json](results/summary.json). The engine log lines are in
-[results/log-excerpts.txt](results/log-excerpts.txt).
+Data:
 
-### Why C loads faster
+- [results/2026-11-08-warm/](results/2026-11-08-warm/): engine logs and probe JSON for each run.
+- [results/2026-11-07-cold/](results/2026-11-07-cold/): probe numbers and engine log lines from the first session.
+  Its full logs were lost when a reboot cleared the temp folder they were in.
 
-Xolotl has a residency policy for the model's 26.8 GiB PLE (per-layer embedding) table. With 485 GiB of RAM free,
-B's engine chose `--ple-io ram` and spent **15.2 s** locking the table into RAM:
+### What made Xolotl faster
 
-```
-strata generate: PLE table locked in RAM (--ple-io ram chosen by the residency policy) in 15.2 s
-```
+This test doesn't isolate the cause. Two differences show up in the logs:
 
-C forces `--ple-io direct`, so the engine reads table rows from the NVMe as tokens need them. It skips that step,
-and 42 s − 15 s ≈ 27 s. The trade-off: B keeps 26.8 GiB of RAM in use while it serves, and C touches the drive on
-every token. Decode speed was the same here, but C could slow down if other jobs load the drive heavily.
+- Xolotl turns on nine bit-exact speed switches for Ampere (sm_86) cards by default:
+
+  ```
+  strata: sm_86 (Ampere): 9 exact speed switches on by default (STRATA_SM86_PERF=0 turns them off ...)
+  ```
+
+- Xolotl's prompt pipeline uses a 384-slot ring, against Strata's 96 slots (`prompt chunk auto: 8192 tokens, a
+  384-slot ring`).
+
+Rerunning B with `STRATA_SM86_PERF=0` would show how much of the gain comes from the speed switches.
+
+### Load time
+
+With a warm cache, the three runs loaded in 24–30 s, and Strata was fastest. Each load time is accurate only to
+±3 s because of the polling interval.
+
+In the cold session, C loaded in 27 s against B's 42 s. The cause was B's engine: it picked `--ple-io ram` and read
+the model's 26.8 GiB PLE (per-layer embedding) table from disk into RAM, which took 15.2 s. With a warm cache the
+same step took 2.5 s. `--ple-io direct` only saves load time when the table isn't already in the page cache. The
+trade-off is RAM against disk: `ram` keeps 26.8 GiB of RAM in use while the server runs, and `direct` reads the
+drive on every token.
 
 ## Caveats
 
-- **Strata's prefill number is probably low.** A ran first, on a cold page cache: Strata loaded the weights at
-  1.86 GiB/s, while B and C loaded them at about 15 GiB/s from the cache A had warmed. The same Strata config, logged
-  earlier in normal use on similar 13–15K-token prompts, prefilled at **2,670–2,930 tok/s**. That is close to
-  Xolotl's 2,670–2,720. Treat the 37% prefill gain as unproven until A is rerun warm.
-- **Decode lengths differ.** Strata stopped after about 320 tokens, while Xolotl wrote all 1,024. Draft acceptance
-  was similar (78–84% in every run), and Strata's earlier logged decode (116–141 tok/s) matches run A. So the decode
-  gain looks real, but the exact percentage needs a matched-length run.
-- **Load times aren't comparable between A and B** for the same cold-cache reason. The 3 s polling interval also
-  makes each load time accurate only to ±3 s.
-- **Agent-turn times aren't comparable.** Xolotl's longer answers meant its follow-up turn had about 1,230 new tokens
-  to read, against about 200 for Strata.
-- **Two passes per run.** The spread between passes is up to 10% for decode.
-- **Only the full server logs were lost.** They sat in a temp folder that a reboot cleared. The numbers above come
-  from the probe output and engine log lines captured during the runs.
+- **Decode lengths differ.** Strata stopped after 348–594 tokens, while Xolotl wrote all 1,024 every time. Draft
+  acceptance was similar (73–81%), and Strata's speed didn't rise with longer answers (594 tokens at 132.5 tok/s, in
+  line with its other runs). So the decode gain looks real, but the exact percentage would need matched-length
+  output.
+- **Strata did better on other prompts.** The same Strata config, logged earlier in normal use on 13–15K-token
+  prompts, prefilled at 2,670–2,930 tok/s. On this probe's source-code prompt, Strata stayed at 1,793–2,084 tok/s in
+  five passes across both sessions, warm and cold. Prompt content seems to matter. Xolotl wasn't measured on those
+  earlier prompts.
+- **One Strata pass failed.** In a first attempt on 8 Nov, Strata's server rejected generated code with
+  `malformed tool call` partway through decode, and the probe got HTTP 400. That attempt is kept in
+  `results/2026-11-08-warm/attempt1/`. Its clean second pass (2,084 / 122.0 tok/s) agrees with the table. C failed
+  to start in the same attempt because B's engine still held GPU memory. `bench.sh` now waits for the GPUs to clear
+  between runs.
+- **Agent-turn times aren't comparable.** Xolotl's longer answers meant its follow-up turn had about 1,210 new tokens
+  to read, against about 185 for Strata.
+- **Two passes per run.** Passes differ by up to 10% for decode. Both sessions agree within a few percent.
 - **Xolotl's own headline numbers** (150–199 tok/s decode) are for a different quant, the
   [XQ 45 GB](https://huggingface.co/IndrasMirror/Qwen3.8-Flash-Next-Swift-1.5-XQ-Uncensored) build, measured on one
-  RTX 4090. Its RTX 40 speed switches (`STRATA_SM89_PERF`) do not apply to 3090s. This test used neither.
+  RTX 4090. This test used the IQ3_S quant on two 3090s.
 
 ## Reproduce
 
@@ -106,7 +126,13 @@ every token. Decode speed was the same here, but C could slow down if other jobs
 
    `ninja` must be on `PATH`. Strata's `.venv` has it, or run `pip install ninja`.
 
-2. Run all three benchmarks. Start from a working Strata install and the config it serves the model with.
+2. Warm the page cache so load times are comparable.
+
+   ```bash
+   cat <model dir>/*.gguf <pack dir>/*.bin <mtp dir>/* > /dev/null
+   ```
+
+3. Run all three benchmarks. Start from a working Strata install and the config it serves the model with.
 
    ```bash
    STRATA_DIR=~/Strata XOLOTL_DIR=~/Xolotl BASE_CONFIG=~/Strata/strata-iq3_s.json ./scripts/run_all.sh
@@ -115,9 +141,6 @@ every token. Decode speed was the same here, but C could slow down if other jobs
    `make_configs.py` writes `configs/A-strata.json`, `configs/B-xolotl-same.json` and `configs/C-xolotl-tuned.json`
    from the base config. `bench.sh` runs each one on port 8098 and writes logs and probe JSON to `results/`.
    Nothing else may be using the GPUs or port 8098 during the run.
-
-   To get a fair prefill comparison, warm the page cache before run A, for example with
-   `cat <model shards> > /dev/null`. Or run A twice and use the second result.
 
 The Xolotl server needs Python's `regex` package. Strata's `.venv` interpreter works for both servers, and
 `run_all.sh` uses it by default.
@@ -130,8 +153,9 @@ specific to it.
 ```
 scripts/build_xolotl.sh   clone + build Xolotl's strata engine
 scripts/make_configs.py   base Strata config -> A/B/C configs
-scripts/bench.sh          start server, probe twice, stop
+scripts/bench.sh          start server, probe twice, stop, wait for GPUs to free
 scripts/run_all.sh        A, B, C back to back
 configs/                  the configs used here
-results/                  summary.json, log-excerpts.txt
+results/2026-11-08-warm/  main session: engine logs + probe JSON
+results/2026-11-07-cold/  first session: probe numbers + log excerpts
 ```
