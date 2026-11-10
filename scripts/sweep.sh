@@ -6,8 +6,12 @@
 #
 # Env: CONTEXTS ("4000 16000 32000 64000", the probe's --prompt target; the real token count is ~0.87x),
 #      PASSES (5), DECODE (1024), CONFIGS ("A-strata B-xolotl-same C-xolotl-tuned"), PORT (8098),
-#      WARM_FILES (files to read into the page cache first).
-# Output: results/sweep/<config>/<prompt>-<pass>.json, <config>.log (engine), sweep.log (console).
+#      WARM_FILES (files to read into the page cache first), EVICT_FILES (files to drop from the page cache before each
+#      config and every poll while it loads: keeps a big model's page cache from filling RAM next to the engine's own
+#      copy), SWEEP_OUT (results/sweep), READY_TIMEOUT (600 s).
+# A config may have a configs/<name>.bench file (shell) setting DIR, SERVER (script relative to DIR) and PYBIN, for
+# servers other than <checkout>/serve/server.py (e.g. Xolotl's tools/v41/serve/serve_ds41.py).
+# Output: $SWEEP_OUT/<config>/<prompt>-<pass>.json, <config>.log (engine), <config>.server.out.
 set -u
 HERE=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)
 STRATA_DIR=${STRATA_DIR:-$HOME/Strata}
@@ -18,10 +22,12 @@ PASSES=${PASSES:-5}
 DECODE=${DECODE:-1024}
 CONFIGS=${CONFIGS:-"A-strata B-xolotl-same C-xolotl-tuned"}
 PORT=${PORT:-8098}; URL=http://127.0.0.1:$PORT
-OUT=$HERE/results/sweep
+OUT=${SWEEP_OUT:-$HERE/results/sweep}
+READY_TIMEOUT=${READY_TIMEOUT:-600}
 mkdir -p "$OUT"
 
 gpus_free() { [ -z "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]; }
+evict() { [ -n "${EVICT_FILES:-}" ] && for f in $EVICT_FILES; do dd if="$f" iflag=nocache count=0 status=none 2>/dev/null; done; true; }
 
 if [ -n "${WARM_FILES:-}" ]; then
   echo "warming page cache"; cat $WARM_FILES > /dev/null
@@ -29,8 +35,11 @@ fi
 
 for N in $CONFIGS; do
   CFG=$HERE/configs/$N.json
-  case $N in A-*) DIR=$STRATA_DIR ;; *) DIR=$XOLOTL_DIR ;; esac
+  case $N in A-*|*-strata*) DIR=$STRATA_DIR ;; *) DIR=$XOLOTL_DIR ;; esac
+  SERVER=serve/server.py; PYBIN=$PY
+  [ -f "$HERE/configs/$N.bench" ] && . "$HERE/configs/$N.bench"
   mkdir -p "$OUT/$N"
+  evict
   for _ in $(seq 1 60); do gpus_free && break; sleep 1; done
   gpus_free || { echo "$N: GPUs busy, skipping"; continue; }
 
@@ -40,12 +49,16 @@ for N in $CONFIGS; do
     "$CFG" "$OUT/$N.log" "$TMPCFG"
 
   cd "$DIR"
-  setsid "$PY" serve/server.py --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null &
+  setsid "$PYBIN" "$SERVER" --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null &
   P=$!
   t0=$(date +%s)
-  for _ in $(seq 1 300); do
+  while :; do
     curl -sf --max-time 2 "$URL/v1/models" >/dev/null 2>&1 && break
     kill -0 $P 2>/dev/null || { echo "$N: server died"; tail -20 "$OUT/$N.server.out"; continue 2; }
+    if (( $(date +%s) - t0 > READY_TIMEOUT )); then
+      echo "$N: not ready after ${READY_TIMEOUT}s, skipping"; kill -KILL -- -$P 2>/dev/null; continue 2
+    fi
+    evict
     sleep 2
   done
   echo "$N: ready after $(( $(date +%s) - t0 ))s"

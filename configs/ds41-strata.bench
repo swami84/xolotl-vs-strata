@@ -1,0 +1,4 @@
+# sourced by scripts/sweep.sh: Strata 0.1.57's terminal install and its bundled python
+DIR=/home/swami/.local/share/strata/terminal/0.1.57
+SERVER=serve/server.py
+PYBIN=/home/swami/.local/share/strata/terminal/0.1.57/python/bin/python3.12

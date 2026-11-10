@@ -1,10 +1,16 @@
-# Xolotl vs Strata: Qwen3.8-Flash-Next on two RTX 3090s
+# Xolotl vs Strata on two RTX 3090s: Qwen3.8-Flash-Next and DeepSeek-V4.1-Flash
 
 [Xolotl](https://github.com/Indras-Mirror/Xolotl) is a fork of the [Strata](https://github.com/Niko1221/Strata)
 MoE inference engine. This repo measures whether swapping Strata's engine for Xolotl's makes the same model faster
-on the same machine. The model, quant, pack, MTP draft, expert profile and flags are all unchanged.
+on the same machine. For Qwen3.8-Flash-Next, the model, quant, pack, MTP draft, expert profile and flags are all
+unchanged. DeepSeek-V4.1-Flash is a second test with a different result; see
+[DeepSeek-V4.1-Flash](#deepseek-v41-flash) below.
 
-**Result, with identical flags:**
+**DeepSeek-V4.1-Flash, in short:** Xolotl's DeepSeek engine decoded **21–25% slower** than Strata's at every prompt
+length. It read prompts 9–21% faster from 14K tokens up (36–42% with its DSpark draft model off), and 16–20% slower
+at 3.4K.
+
+**Qwen3.8-Flash-Next, with identical flags:**
 
 - **Decode is about 20% faster** when both engines write the same number of tokens: 138 → 164 tok/s at 3.3K
   prompt tokens and 132 → 164 tok/s at 54K. Where Strata's answers stopped early, the gap was 32–38%.
@@ -155,7 +161,136 @@ the page cache. The trade-off is RAM against disk: `ram` keeps 26.8 GiB of RAM i
   [XQ 45 GB](https://huggingface.co/IndrasMirror/Qwen3.8-Flash-Next-Swift-1.5-XQ-Uncensored) build, measured on one
   RTX 4090. This test used the IQ3_S quant on two 3090s.
 
+## DeepSeek-V4.1-Flash
+
+**Result:**
+
+- **Decode is 21–25% slower on Xolotl at every length:** 31.5 → 24.7 tok/s at 3.4K prompt tokens and 28.0 → 22.0
+  tok/s at 27K. Every pass on both engines wrote all 512 tokens, so the answers are equal length.
+- **Prefill is 16% slower at 3.4K and 9–21% faster from 14K up.** With Xolotl's DSpark draft model turned off,
+  long-prompt prefill was faster still: 36–42% ahead of Strata.
+- **DSpark helped Xolotl's decode only at 3.4K** (24.7 vs 21.4 tok/s) and cost it prefill from 14K up. Strata turned
+  DSpark off by itself on this machine (see below).
+
+![DeepSeek prefill and decode speed vs prompt length](docs/ds41_speed_vs_context.png)
+
+![Xolotl speedup over Strata on DeepSeek vs prompt length](docs/ds41_speedup_vs_context.png)
+
+This test is not an engine-binary swap like the Qwen one. Both projects ship a separate engine for DeepSeek-V4.1,
+with its own flags, so each engine runs with its own settings. The settings were picked to match output quality
+where the flags allow it.
+
+### Setup
+
+| | |
+| --- | --- |
+| Model | DeepSeek-V4.1-Flash-1017 GSQ-RCO **IQ2_XS** by ISTA-DASLab ("IST-DAS 2.25 bpw" in Strata's setup): 4 GGUF shards, 145 GB, plus the Engram table (IQ4_NL, 110.6 GB) and the DSpark draft model (Q8_0, 8.0 GB) |
+| Strata | Terminal 0.1.57; its DeepSeek engine `strata-dsv41` 0.1.59 (prebuilt, from setup) |
+| Xolotl | `ds41_generate` from commit `8486ead`, built for sm_86, run through Xolotl's `tools/v41/serve/serve_ds41.py` and `ds41-engine.sh` |
+| GPUs / CPU / RAM | Same machine as the Qwen test. Both engines split the 40 layers across the two cards, layers 0–19 and 20–39 |
+
+**Strata**: the config its setup wrote, unchanged except for the port.
+
+```
+--max-context 131072 --eos 1 --vision on --dspark auto --dspark-conf 0.65 --tp 2 --reserve-mib 900
+```
+
+**Xolotl**: Xolotl's serve config (`tools/v41/serve/strata-ds41.json`), with three changes so the output matches
+Strata's more closely.
+
+```
+--backend cuda --experts gpu --engram <Engram-IQ4_NL.gguf> --rank configs/ds41-rank.bin
+--ctx 131072 --stop 1 --arena-adapt --arena-gib 150 --route-bias 0 --route-bias-file 0
+--prompt-batch 12288 --layer-split auto
+env STRATA_SERVE_DSPARK=<dspark-...-Q8_0.gguf>   (empty for the DSpark-off run)
+```
+
+- **Exact routing:** `--route-bias 0 --route-bias-file 0`. Xolotl's serve config ships 0.5 and 0.3, which steer tokens
+  toward experts already in VRAM. Its own docs say this trades quality for speed, so it was turned off.
+- **No `--kv-fp4`:** the shipped config stores the KV cache in 4 bits. This run uses the engine's default 16-bit
+  cache.
+- **The same expert ranking as Strata:** `--rank` decides which experts go into VRAM first. Without it the engine
+  starts at layer 0, expert 0. [scripts/ds41_rank_from_profile.py](scripts/ds41_rank_from_profile.py) turns the
+  expert profile in Strata's pack (routing counts per expert) into Xolotl's rank file.
+
+`ds41-engine.sh` adds its own defaults on top. Two of them matter here:
+
+- DSpark runs 4 tokens deep, at confidence 0.6, with the draft's experts cut to the 64 most used per layer.
+- The dense weights (attention, shared expert, head) are re-quantized from Q8_0 to Q6_K at load. This saves about
+  1.7 GB of VRAM for expert slots. It is lossy; Xolotl measured a small KL increase (0.2281 → 0.2306).
+
+### Where the experts live
+
+Strata kept 3,672 of the 15,360 routed experts in VRAM, with about 880 MiB left free on each card. The other 113 GB of
+experts were read in place from the model files, through the page cache.
+
+Xolotl copied all 15,360 experts into a pinned RAM arena (67.9 GiB per card's half of the layers), so nothing came
+from disk. It held 3,300–4,100 experts in VRAM, with the most just after load. It empties that cache for each prompt and refills it before decode.
+
+Strata didn't load DSpark at all:
+
+```
+ds4: DSpark not loaded: the routed experts (149 GB) are far more than the GPU holds (47 GB), where its verify
+rounds read 3.3x a token's bytes and gain nothing (--dspark on loads it anyway)
+```
+
+Xolotl ran DSpark at 3.1–3.3 tokens per verify pass. That gave it 15% more decode speed at 3.4K, and nothing
+measurable at 14K and 27K.
+
+### Method
+
+Same probe and sweep script as the Qwen test. The differences: prompts of 3.4K, 14K and 27K tokens (the probe's
+4K/16K/32K targets), **3 passes** per length, and **512-token** answers. Each server started once and ran one
+discarded warm-up pass, and the configs ran one after another. 27 of 27 passes succeeded.
+
+### Prefill (tokens/s, mean ± 95% CI)
+
+| Prompt | Strata | Xolotl, DSpark on | / Strata | Xolotl, DSpark off | / Strata |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 3.4K | 364 ± 7 | 307 ± 36 | **0.84** (0.81–0.89) | 293 ± 20 | 0.80 (0.79–0.83) |
+| 14K | 430 ± 12 | 470 ± 19 | **1.09** (1.07–1.11) | 613 ± 41 | 1.42 (1.39–1.46) |
+| 27K | 483 ± 49 | 585 ± 30 | **1.21** (1.16–1.26) | 656 ± 49 | 1.36 (1.30–1.42) |
+
+### Decode (tokens/s, mean ± 95% CI, 512 tokens every pass)
+
+| Prompt | Strata | Xolotl, DSpark on | / Strata | Xolotl, DSpark off | / Strata |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 3.4K | 31.5 ± 0.6 | 24.7 ± 4.6 | **0.78** (0.73–0.85) | 21.4 ± 0.5 | 0.68 (0.67–0.69) |
+| 14K | 29.0 ± 0.2 | 22.1 ± 1.4 | **0.76** (0.74–0.77) | 21.5 ± 3.2 | 0.74 (0.70–0.79) |
+| 27K | 28.0 ± 0.8 | 22.0 ± 4.1 | **0.79** (0.74–0.85) | 21.0 ± 3.3 | 0.75 (0.71–0.80) |
+
+All numbers are in [results/sweep-ds41/summary.csv](results/sweep-ds41/summary.csv), and each pass has its own JSON
+under `results/sweep-ds41/<config>/`.
+
+### Reading the DeepSeek results
+
+- **Strata's decode advantage doesn't come from more experts in VRAM.** Both engines held about the same number
+  (3,672 against 3,300–4,100). This test doesn't show where the gap comes from. One visible difference: Xolotl's log
+  shows its VRAM cache failing to regrow after some prompts and being refilled from scratch
+  (`keep-cache regrow fail (the driver has no VRAM for another expert-cache segment, 0.04 GiB free) - re-seed needed`).
+- **Xolotl's prefill gain grows with prompt length**, as it did on Qwen. Its prompt path runs a 12,288-token
+  layer-major batch.
+- **DSpark costs Xolotl prefill.** Its 4.4 GB of draft weights sit on the card. With DSpark off, the 14K and 27K
+  prompts read 30% and 12% faster, and decode lost only about 1 tok/s at those lengths.
+- **Strata's choice to skip DSpark held up.** On this machine, Xolotl's DSpark-on and DSpark-off decode were the same
+  within the CIs from 14K up.
+
+### DeepSeek caveats
+
+- **The settings aren't identical.** Strata's config has image input on (`--vision on`). Xolotl's has it off,
+  because Xolotl's server refuses images with ISTA-DASLab's files (they lack the router's image bias). Xolotl
+  re-quantizes the dense weights to Q6_K and Strata doesn't. Strata's flags for its own KV cache and routing were
+  left at its defaults.
+- **3 passes per point.** Xolotl's decode CIs are wide (up to ±4.6 tok/s). The Strata/Xolotl gap is larger than
+  that at every length.
+- **Load time isn't compared.** The page cache was warm from the download and from the earlier runs. Time to first
+  answer was 24 s for Strata, 48 s for Xolotl with DSpark, and 30 s without.
+- **A different quant from the old Strata setup.** The machine previously ran Unsloth's UD-Q8_K_XL. Xolotl's engine
+  can't read that set's MXFP8 Engram table, so both engines used ISTA-DASLab's IQ2_XS here.
+
 ## Reproduce
+
+These steps are for the Qwen test. The DeepSeek steps follow them.
 
 1. Build Xolotl's engine. This takes about 5 minutes on 64 cores.
 
@@ -196,6 +331,46 @@ For a quick check at one length, use `scripts/run_all.sh`. It runs 2 passes per 
 The configs in `configs/` were generated for this machine and are kept for reference. Their paths are specific to
 it.
 
+### DeepSeek-V4.1-Flash
+
+1. Install the model with Strata's setup (Terminal 0.1.57). Pick **IST-DAS 2.25bpw**. It downloads 274 GB and
+   builds the pack.
+2. Build Xolotl's DeepSeek engine into `build-ds41`. `ds41-engine.sh` picks that folder up by itself.
+
+   ```bash
+   cmake -S ~/Xolotl -B ~/Xolotl/build-ds41 -G Ninja -DCMAKE_BUILD_TYPE=Release -DSTRATA_ENABLE_CUDA=ON \
+         -DSTRATA_GGML_CUDA=ON -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=86 \
+         -DSTRATA_GGML_DIR=$HOME/Xolotl/third_party/llama.cpp
+   ninja -C ~/Xolotl/build-ds41 ds41_generate
+   ```
+
+3. Make the rank file from Strata's pack. Then edit the paths in `configs/ds41-*.json` and `configs/ds41-*.bench`.
+
+   ```bash
+   python3 scripts/ds41_rank_from_profile.py <Strata-data>/packs/deepseek-v4.1-flash-ist-das-2.25bpw/expert-profile.bin \
+       configs/ds41-rank.bin
+   ```
+
+4. Run the sweep. It takes about 35 minutes for the three configs. Each `.bench` file tells `sweep.sh` which server
+   script and Python to start.
+
+   ```bash
+   STRATA_DIR=~/Strata XOLOTL_DIR=~/Xolotl CONFIGS="ds41-strata ds41-xolotl ds41-xolotl-nodspark" \
+   CONTEXTS="4000 16000 32000" PASSES=3 DECODE=512 SWEEP_OUT=$PWD/results/sweep-ds41 READY_TIMEOUT=3600 \
+   ./scripts/sweep.sh | tee results/sweep-ds41-console.log
+   ```
+
+5. Make the plots and `summary.csv`.
+
+   ```bash
+   .venv/bin/python scripts/plot.py results/sweep-ds41 --prefix ds41_ --speedup-legend "lower right" --split-labels \
+       --series "ds41-strata=Strata 0.1.57;ds41-xolotl=Xolotl, DSpark on;ds41-xolotl-nodspark=Xolotl, DSpark off" \
+       --title "DeepSeek-V4.1-Flash IST-DAS 2.25 bpw on 2x RTX 3090: Strata vs Xolotl"
+   ```
+
+`ds41-engine.sh` runs the engine under `systemd-run --user` with a memory cap of `DS41_MEMORY_MAX` (default 100G),
+and takes a lock file at `DS4_LOCK`. The configs set these to 400G and `/tmp/xolotl-ds41-gpu.lock`.
+
 ## Files
 
 ```
@@ -205,8 +380,11 @@ scripts/sweep.sh          context sweep: each config x prompt lengths x passes
 scripts/plot.py           charts + summary.csv from the sweep (95% CIs)
 scripts/bench.sh          one config: start server, probe twice, stop
 scripts/run_all.sh        quick check: A, B, C at ~14K, 2 passes each
-configs/                  the configs used here
-docs/                     the charts
-results/sweep/            context sweep: per-pass JSON, engine logs, summary.csv
+scripts/ds41_rank_from_profile.py   Strata's DeepSeek expert profile -> Xolotl's --rank file
+configs/                  the configs used here (ds41-* = DeepSeek; *.bench = which server sweep.sh starts)
+docs/                     the charts (ds41_* = DeepSeek)
+results/sweep/            Qwen context sweep: per-pass JSON, engine logs, summary.csv
+results/sweep-ds41/       DeepSeek context sweep, same layout
+results/ds41-setup.log    Strata's DeepSeek download and pack build
 results/2026-11-0*/       earlier 14K-only sessions
 ```

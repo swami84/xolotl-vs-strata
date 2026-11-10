@@ -1,0 +1,39 @@
+ds41-strata: ready after 24s
+ds41-strata: warm-up (discarded)
+ds41-strata ctx=4000 pass=1: prefill 3446 tok at 361.5 tok/s | decode 512 tok at 31.6 tok/s | +171-token turn on 3994 reused: 3.24 s
+ds41-strata ctx=4000 pass=2: prefill 3450 tok at 367.1 tok/s | decode 512 tok at 31.6 tok/s | +171-token turn on 3998 reused: 3.22 s
+ds41-strata ctx=4000 pass=3: prefill 3452 tok at 363.3 tok/s | decode 512 tok at 31.2 tok/s | +170-token turn on 4000 reused: 3.23 s
+ds41-strata ctx=16000 pass=1: prefill 14144 tok at 431.3 tok/s | decode 512 tok at 29.0 tok/s | +207-token turn on 14692 reused: 3.07 s
+ds41-strata ctx=16000 pass=2: prefill 14147 tok at 434.7 tok/s | decode 512 tok at 29.1 tok/s | +209-token turn on 14695 reused: 3.07 s
+ds41-strata ctx=16000 pass=3: prefill 14153 tok at 425.1 tok/s | decode 512 tok at 28.9 tok/s | +201-token turn on 14701 reused: 3.07 s
+ds41-strata ctx=32000 pass=1: prefill 26863 tok at 474.3 tok/s | decode 512 tok at 28.2 tok/s | +169-token turn on 27411 reused: 3.22 s
+ds41-strata ctx=32000 pass=2: prefill 26862 tok at 505.1 tok/s | decode 512 tok at 28.1 tok/s | +164-token turn on 27410 reused: 3.16 s
+ds41-strata ctx=32000 pass=3: prefill 26859 tok at 468.9 tok/s | decode 512 tok at 27.6 tok/s | +162-token turn on 27407 reused: 2.96 s
+./scripts/sweep.sh: line 86: 138196 Killed                  setsid "$PYBIN" "$SERVER" --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+ds41-strata: stopped
+ds41-xolotl: ready after 48s
+ds41-xolotl: warm-up (discarded)
+ds41-xolotl ctx=4000 pass=1: prefill 3447 tok at 323.0 tok/s | decode 512 tok at 24.5 tok/s | +176-token turn on 3996 reused: 3.94 s
+ds41-xolotl ctx=4000 pass=2: prefill 3448 tok at 295.2 tok/s | decode 512 tok at 22.9 tok/s | +172-token turn on 3997 reused: 3.88 s
+ds41-xolotl ctx=4000 pass=3: prefill 3444 tok at 303.3 tok/s | decode 512 tok at 26.6 tok/s | +177-token turn on 3992 reused: 3.79 s
+ds41-xolotl ctx=16000 pass=1: prefill 14169 tok at 472.7 tok/s | decode 512 tok at 21.4 tok/s | +165-token turn on 14717 reused: 3.73 s
+ds41-xolotl ctx=16000 pass=2: prefill 14165 tok at 476.0 tok/s | decode 512 tok at 22.4 tok/s | +164-token turn on 14713 reused: 3.73 s
+ds41-xolotl ctx=16000 pass=3: prefill 14170 tok at 461.4 tok/s | decode 512 tok at 22.4 tok/s | +160-token turn on 14719 reused: 3.58 s
+ds41-xolotl ctx=32000 pass=1: prefill 26857 tok at 597.6 tok/s | decode 512 tok at 23.9 tok/s | +175-token turn on 27406 reused: 4.19 s
+ds41-xolotl ctx=32000 pass=2: prefill 26845 tok at 584.8 tok/s | decode 512 tok at 21.5 tok/s | +692-token turn on 26882 reused: 6.98 s
+ds41-xolotl ctx=32000 pass=3: prefill 26842 tok at 573.4 tok/s | decode 512 tok at 20.7 tok/s | +191-token turn on 27391 reused: 4.35 s
+./scripts/sweep.sh: line 86: 141319 Killed                  setsid "$PYBIN" "$SERVER" --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+ds41-xolotl: stopped
+ds41-xolotl-nodspark: ready after 30s
+ds41-xolotl-nodspark: warm-up (discarded)
+ds41-xolotl-nodspark ctx=4000 pass=1: prefill 3439 tok at 301.6 tok/s | decode 512 tok at 21.6 tok/s | +175-token turn on 3987 reused: 3.47 s
+ds41-xolotl-nodspark ctx=4000 pass=2: prefill 3444 tok at 289.9 tok/s | decode 512 tok at 21.2 tok/s | +180-token turn on 3992 reused: 3.4 s
+ds41-xolotl-nodspark ctx=4000 pass=3: prefill 3452 tok at 286.5 tok/s | decode 512 tok at 21.3 tok/s | +177-token turn on 4000 reused: 3.72 s
+ds41-xolotl-nodspark ctx=16000 pass=1: prefill 14162 tok at 595.9 tok/s | decode 512 tok at 21.2 tok/s | +165-token turn on 14710 reused: 3.09 s
+ds41-xolotl-nodspark ctx=16000 pass=2: prefill 14160 tok at 628.8 tok/s | decode 512 tok at 20.4 tok/s | +162-token turn on 14708 reused: 3.25 s
+ds41-xolotl-nodspark ctx=16000 pass=3: prefill 14151 tok at 613.4 tok/s | decode 512 tok at 22.9 tok/s | +159-token turn on 14699 reused: 3.74 s
+ds41-xolotl-nodspark ctx=32000 pass=1: prefill 26851 tok at 644.5 tok/s | decode 512 tok at 20.6 tok/s | +180-token turn on 27399 reused: 3.22 s
+ds41-xolotl-nodspark ctx=32000 pass=2: prefill 26849 tok at 644.1 tok/s | decode 512 tok at 22.5 tok/s | +183-token turn on 27397 reused: 4.15 s
+ds41-xolotl-nodspark ctx=32000 pass=3: prefill 26864 tok at 678.5 tok/s | decode 512 tok at 19.9 tok/s | +172-token turn on 27412 reused: 3.11 s
+./scripts/sweep.sh: line 86: 166338 Killed                  setsid "$PYBIN" "$SERVER" --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+ds41-xolotl-nodspark: stopped

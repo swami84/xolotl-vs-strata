@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Plot the context-length sweep: prefill and decode speed vs prompt length, mean with 95% CI, plus Xolotl's speedup.
 
-    .venv/bin/python scripts/plot.py [results/sweep]
+    .venv/bin/python scripts/plot.py [SWEEP_DIR] [--series "cfg=Label;cfg=Label;..."] [--prefix P] [--title T]
 
 Reads <sweep>/<config>/<prompt>-<pass>.json (written by sweep.sh) and writes:
-  <sweep>/summary.csv          one row per config x prompt length (the table view of the charts)
-  docs/speed_vs_context.png    prefill and decode tok/s vs prompt tokens, mean +/- 95% CI (t distribution)
-  docs/speedup_vs_context.png  Xolotl / Strata ratio of means, 95% bootstrap CI
-Needs matplotlib and numpy.
+  <sweep>/summary.csv            one row per config x prompt length (the table view of the charts)
+  docs/<P>speed_vs_context.png   prefill and decode tok/s vs prompt tokens, mean +/- 95% CI (t distribution)
+  docs/<P>speedup_vs_context.png each series / the first series, ratio of means, 95% bootstrap CI
+The first series is the baseline (Strata). Defaults are the QFN sweep. Needs matplotlib and numpy.
 """
+import argparse
 import csv
 import glob
 import json
@@ -21,16 +22,23 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SWEEP = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "results", "sweep"))
+ap = argparse.ArgumentParser()
+ap.add_argument("sweep", nargs="?", default=os.path.join(HERE, "results", "sweep"))
+ap.add_argument("--series", default="A-strata=Strata;B-xolotl-same=Xolotl (same flags);C-xolotl-tuned=Xolotl (tuned)")
+ap.add_argument("--prefix", default="")
+ap.add_argument("--title", default="Qwen3.8-Flash-Next IQ3_S on 2x RTX 3090: Strata vs Xolotl")
+ap.add_argument("--speedup-legend", default="upper right", help="legend position on the speedup chart")
+ap.add_argument("--split-labels", action="store_true", help="speedup chart: label the second series' end point on the left")
+ARGS = ap.parse_args()
+SWEEP = os.path.abspath(ARGS.sweep)
 DOCS = os.path.join(HERE, "docs")
 
 # Series: fixed order, fixed color, fixed marker (identity never color-alone). Palette validated with the dataviz
 # skill's validate_palette.js (light): all checks pass; aqua is < 3:1 on the surface, so every line is direct-labelled.
-SERIES = [
-    ("A-strata", "Strata", "#2a78d6", "o"),
-    ("B-xolotl-same", "Xolotl (same flags)", "#eb6834", "s"),
-    ("C-xolotl-tuned", "Xolotl (tuned)", "#1baf7a", "^"),
-]
+STYLES = [("#2a78d6", "o"), ("#eb6834", "s"), ("#1baf7a", "^")]
+SERIES = [(cfg, label, *STYLES[i]) for i, (cfg, label) in
+          enumerate(s.split("=", 1) for s in ARGS.series.split(";"))]
+BASE = SERIES[0][0]
 SURFACE, INK, INK2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 T95 = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228}
 
@@ -111,7 +119,7 @@ def main():
                          "decode_tokens_mean": int(round(float(dt))) if dt == dt else None})
 
     # speedups vs Strata, per context
-    base = data.get("A-strata", {})
+    base = data.get(BASE, {})
     for cfg, label, *_ in SERIES[1:]:
         for ctx in sorted(data.get(cfg, {})):
             if ctx not in base:
@@ -140,8 +148,9 @@ def main():
 
     plt.rcParams.update({"font.family": "DejaVu Sans", "figure.facecolor": SURFACE})
     ticks = [round(x, -2) for x, *_ in stats[(SERIES[0][0], "prefill")]]
-    # Strata decode points whose answers stopped short of the full DECODE length: drawn hollow
-    short = [n < 1000 for n in stats.get(("A-strata", "decode_n"), [])]
+    # baseline decode points whose answers stopped well short of the longest answer (the requested length): hollow
+    longest = max((r["decode_tokens_mean"] or 0) for r in rows)
+    short = [n < 0.95 * longest for n in stats.get((BASE, "decode_n"), [])]
 
     # Figure 1: speed vs context, two panels (separate y axes per panel, never a dual axis)
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.8), dpi=150)
@@ -155,7 +164,7 @@ def main():
             ax.fill_between(x, m - c, m + c, color=color, alpha=0.15, linewidth=0)
             ax.plot(x, m, color=color, linewidth=2, marker=marker, markersize=7,
                     markeredgecolor=SURFACE, markeredgewidth=2, label=label)
-            if metric == "decode" and cfg == "A-strata" and any(short):
+            if metric == "decode" and cfg == BASE and any(short):
                 hx, hm = x[np.array(short)], m[np.array(short)]
                 ax.plot(hx, hm, linestyle="none", marker=marker, markersize=7, markerfacecolor=SURFACE,
                         markeredgecolor=color, markeredgewidth=2)
@@ -165,12 +174,14 @@ def main():
                         va="center", fontsize=9, color=INK)
         ax.set_ylim(bottom=0)
     axes[0].legend(frameon=False, fontsize=9, labelcolor=INK, loc="lower right")
-    fig.suptitle("Qwen3.8-Flash-Next IQ3_S on 2x RTX 3090: Strata vs Xolotl", x=0.01, ha="left",
+    fig.suptitle(ARGS.title, x=0.01, ha="left",
                  color=INK, fontsize=13, fontweight="bold")
-    fig.text(0.01, 0.005, "Shaded band = 95% CI (t distribution) over 4-5 passes; numbers = mean at the longest "
-             "prompt. Decode asks for 1,024 tokens.", color=INK2, fontsize=8)
+    lo_n, hi_n = min(r["passes_ok"] for r in rows), max(r["passes_ok"] for r in rows)
+    passes = f"{lo_n}" if lo_n == hi_n else f"{lo_n}-{hi_n}"
+    fig.text(0.01, 0.005, f"Shaded band = 95% CI (t distribution) over {passes} passes; numbers = mean at the longest "
+             f"prompt. Decode asks for {longest:,} tokens.", color=INK2, fontsize=8)
     fig.tight_layout(rect=(0, 0.03, 1, 0.95))
-    fig.savefig(os.path.join(DOCS, "speed_vs_context.png"), facecolor=SURFACE)
+    fig.savefig(os.path.join(DOCS, ARGS.prefix + "speed_vs_context.png"), facecolor=SURFACE)
     plt.close(fig)
 
     # Figure 2: speedup vs context
@@ -190,13 +201,16 @@ def main():
             if metric == "decode" and any(short):
                 ax.plot(x[np.array(short)], m[np.array(short)], linestyle="none", marker=marker, markersize=7,
                         markerfacecolor=SURFACE, markeredgecolor=color, markeredgewidth=2, zorder=5)
-            ax.annotate(f"{(m[-1] - 1) * 100:+.0f}%", (x[-1], m[-1]), xytext=(10, 0), textcoords="offset points",
-                        va="center", fontsize=9, color=INK)
-    axes[0].legend(frameon=False, fontsize=9, labelcolor=INK, loc="upper right")
+            # the left-dodged series labels to the left so the two end labels never collide
+            left = ARGS.split_labels and dodge < 1
+            ax.annotate(f"{(m[-1] - 1) * 100:+.0f}%", (x[-1], m[-1]), xytext=(-10 if left else 10, 0),
+                        textcoords="offset points", ha="right" if left else "left", va="center", fontsize=9, color=INK)
+    axes[0].legend(frameon=False, fontsize=9, labelcolor=INK, loc=ARGS.speedup_legend)
     fig.text(0.01, 0.005, "Error bars = 95% bootstrap CI of the ratio of means (10,000 resamples). Dashed line = "
-             "no change. Hollow = Strata's answer stopped early, so lengths are not matched.", color=INK2, fontsize=8)
+             "no change." + (" Hollow = Strata's answer stopped early, so lengths are not matched." if any(short) else ""),
+             color=INK2, fontsize=8)
     fig.tight_layout(rect=(0, 0.03, 1, 1))
-    fig.savefig(os.path.join(DOCS, "speedup_vs_context.png"), facecolor=SURFACE)
+    fig.savefig(os.path.join(DOCS, ARGS.prefix + "speedup_vs_context.png"), facecolor=SURFACE)
     plt.close(fig)
 
     for r in rows:

@@ -3,3 +3,4 @@ deepflash.sh
 *.server.out
 __pycache__/
 .venv/
+ds4-slots/

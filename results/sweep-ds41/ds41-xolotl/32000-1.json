@@ -1,0 +1,10 @@
+{
+ "prefill_tokens": 26857,
+ "prefill_tok_s": 597.6,
+ "decode_tokens": 512,
+ "decode_tok_s": 23.9,
+ "turn_new_tokens": 175,
+ "turn_reused": 27406,
+ "turn_prefill_s": 4.19,
+ "turn_wall_s": 4.67
+}

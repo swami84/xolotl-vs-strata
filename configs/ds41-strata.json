@@ -1,0 +1,35 @@
+{
+ "exe": "/home/swami/.local/share/strata/terminal/0.1.57/engine-dsv41/0.1.59-linux-x86_64-cuda-cuda13/strata-dsv41",
+ "args": [
+  "--pack",
+  "/home/swami/Work/Courses/llm_testing/Strata-data/packs/deepseek-v4.1-flash-ist-das-2.25bpw",
+  "--max-context",
+  "131072",
+  "--eos",
+  "1",
+  "--vision",
+  "on",
+  "--dspark",
+  "auto",
+  "--dspark-conf",
+  "0.65",
+  "--tp",
+  "2",
+  "--reserve-mib",
+  "900"
+ ],
+ "cwd": "/home/swami/.local/share/strata/terminal/0.1.57",
+ "tokenizer": "/home/swami/Work/Courses/llm_testing/Strata-data/packs/deepseek-v4.1-flash-ist-das-2.25bpw/tokenizer",
+ "model_name": "deepseek-v4.1-flash",
+ "arch": "deepseek41",
+ "log": "/home/swami/Work/Projects/moe_inference_test/results/ds41-strata.log",
+ "lib_dirs": [
+  "/home/swami/.local/share/strata/terminal/0.1.57/engine-dsv41/0.1.59-linux-x86_64-cuda-cuda13"
+ ],
+ "port": 8098,
+ "engine_ready_s": 3600,
+ "gpu": [
+  1,
+  0
+ ]
+}
