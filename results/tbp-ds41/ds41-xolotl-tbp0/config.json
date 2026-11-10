@@ -1,0 +1,46 @@
+{
+ "exe": "/home/swami/Work/Projects/Xolotl/tools/v41/serve/ds41-engine.sh",
+ "args": [
+  "-m",
+  "/home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-IST-DAS-2.25bpw/DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ2_XS-00001-of-00004.gguf",
+  "--backend",
+  "cuda",
+  "--experts",
+  "gpu",
+  "--engram",
+  "/home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf",
+  "--rank",
+  "/home/swami/Work/Projects/moe_inference_test/configs/ds41-rank.bin",
+  "--ctx",
+  "131072",
+  "--stop",
+  "1",
+  "--arena-adapt",
+  "--arena-gib",
+  "150",
+  "--route-bias",
+  "0",
+  "--route-bias-file",
+  "0",
+  "--prompt-batch",
+  "12288",
+  "--tier-batch-pcie",
+  "0"
+ ],
+ "cwd": "/home/swami/Work/Projects/Xolotl",
+ "tokenizer": "/home/swami/Work/Courses/llm_testing/Strata-data/packs/deepseek-v4.1-flash-ist-das-2.25bpw/tokenizer",
+ "model_name": "deepseek-v4.1-flash",
+ "log": "/home/swami/Work/Projects/moe_inference_test/results/tbp-ds41/ds41-xolotl-tbp0.log",
+ "port": 8098,
+ "gpu": [
+  1,
+  0
+ ],
+ "layer_split": "auto",
+ "engine_ready_s": 3600,
+ "env": {
+  "STRATA_SERVE_DSPARK": "/home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf",
+  "DS4_LOCK": "/tmp/xolotl-ds41-gpu.lock",
+  "DS41_MEMORY_MAX": "400G"
+ }
+}

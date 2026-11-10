@@ -1,0 +1,21 @@
+ds41-xolotl-tbp0: ready after 35s
+ds41-xolotl-tbp0: warm-up (discarded)
+ds41-xolotl-tbp0 ctx=16000 pass=1: prefill 14253 tok at 467.1 tok/s | decode 512 tok at 27.0 tok/s | +191-token turn on 14802 reused: 3.42 s
+ds41-xolotl-tbp0 ctx=16000 pass=2: prefill 13785 tok at 465.3 tok/s | decode 512 tok at 26.2 tok/s | +693-token turn on 13822 reused: 5.61 s
+ds41-xolotl-tbp0 ctx=16000 pass=3: prefill 13795 tok at 449.2 tok/s | decode 512 tok at 26.9 tok/s | +638-token turn on 13832 reused: 5.62 s
+./scripts/sweep.sh: line 86: 208559 Killed                  setsid "$PYBIN" "$SERVER" --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+ds41-xolotl-tbp0: stopped
+ds41-xolotl-tbp025: ready after 34s
+ds41-xolotl-tbp025: warm-up (discarded)
+ds41-xolotl-tbp025 ctx=16000 pass=1: prefill 13803 tok at 437.4 tok/s | decode 512 tok at 31.9 tok/s | +173-token turn on 14351 reused: 3.44 s
+ds41-xolotl-tbp025 ctx=16000 pass=2: prefill 13802 tok at 498.0 tok/s | decode 512 tok at 32.9 tok/s | +178-token turn on 14351 reused: 3.49 s
+ds41-xolotl-tbp025 ctx=16000 pass=3: prefill 13802 tok at 496.6 tok/s | decode 512 tok at 32.1 tok/s | +177-token turn on 14350 reused: 3.48 s
+./scripts/sweep.sh: line 86: 232100 Killed                  setsid "$PYBIN" "$SERVER" --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+ds41-xolotl-tbp025: stopped
+ds41-xolotl-tbp05: ready after 35s
+ds41-xolotl-tbp05: warm-up (discarded)
+ds41-xolotl-tbp05 ctx=16000 pass=1: prefill 13803 tok at 475.0 tok/s | decode 512 tok at 30.3 tok/s | +171-token turn on 14351 reused: 3.74 s
+ds41-xolotl-tbp05 ctx=16000 pass=2: prefill 13804 tok at 439.5 tok/s | decode 512 tok at 35.5 tok/s | +173-token turn on 14353 reused: 3.67 s
+ds41-xolotl-tbp05 ctx=16000 pass=3: prefill 13817 tok at 446.5 tok/s | decode 512 tok at 28.4 tok/s | +650-token turn on 13854 reused: 5.72 s
+./scripts/sweep.sh: line 86: 252906 Killed                  setsid "$PYBIN" "$SERVER" --engine strata --config "$TMPCFG" --port "$PORT" > "$OUT/$N.server.out" 2>&1 < /dev/null
+ds41-xolotl-tbp05: stopped

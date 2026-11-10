@@ -1,0 +1,4 @@
+# sourced by scripts/sweep.sh: Xolotl's DeepSeek-V4.1 server wrapper (ds41_generate behind Strata's server)
+DIR=/home/swami/Work/Projects/Xolotl
+SERVER=tools/v41/serve/serve_ds41.py
+PYBIN=/home/swami/Work/Courses/llm_testing/Strata/.venv/bin/python
