@@ -1,53 +1,56 @@
-[strata] 2026-11-09 20:44:23 engine started: /home/swami/.local/share/strata/terminal/0.1.57/engine-dsv41/0.1.59-linux-x86_64-cuda-cuda13/strata-dsv41 --serve --pack /home/swami/Work/Courses/llm_testing/Strata-data/packs/deepseek-v4.1-flash-ist-das-2.25bpw --max-context 131072 --eos 1 --vision on --dspark auto --dspark-conf 0.65 --tp 2 --reserve-mib 900 --layer-split auto
+[strata] 2026-11-09 22:47:58 engine started: /home/swami/.local/share/strata/terminal/0.1.57/engine-dsv41/0.1.59-linux-x86_64-cuda-cuda13/strata-dsv41 --serve --pack /home/swami/Work/Courses/llm_testing/Strata-data/packs/deepseek-v4.1-flash-ist-das-2.25bpw --max-context 131072 --eos 1 --vision off --dspark auto --dspark-conf 0.65 --tp 2 --reserve-mib 900 --layer-split auto
 ds4: tensor parallel 2 -> 1: the experts' 256-value blocks split n_ff 2304 no other way (each GPU its own layers)
 ds4: prompts in chunks of 4096 tokens (the experts are copied into RAM, 24 GiB of graphics memory; --prefill-chunk N changes it)
 ds4: the one-GPU decode path (in-place pulls, windows streamed, landings): off (v1.1.27's path: not NVIDIA + one GPU)
 ds4: DSpark not loaded: the routed experts (149 GB) are far more than the GPU holds (47 GB), where its verify rounds read 3.3x a token's bytes and gain nothing (--dspark on loads it anyway)
-ds4: the experts VRAM leaves over (~113.0 GB) are read in place from the model's files (--mmap-experts off copies them into RAM) (515.3 GB of RAM free to keep them: the most-routed 113.0 GB read ahead; prompts in chunks of 4096)
-ds4: --mmap-experts auto: the CPU lane's experts (114.2 GB) fit the RAM this process can get (506.5 GB beside 9 GB for the rest): copied in at load, no demand store (--mmap-experts on keeps them in place)
-ds4: 11688 of the CPU lane's 11688 experts copied into RAM (113.4 GB, 1 NUMA part) in 5.3 s
+ds4: the experts VRAM leaves over (~113.1 GB) are read in place from the model's files (--mmap-experts off copies them into RAM) (512.4 GB of RAM free to keep them: the most-routed 113.1 GB read ahead; prompts in chunks of 4096)
+ds4: --mmap-experts auto: the CPU lane's experts (114.2 GB) fit the RAM this process can get (503.7 GB beside 9 GB for the rest): copied in at load, no demand store (--mmap-experts on keeps them in place)
+ds4: 11692 of the CPU lane's 11692 experts copied into RAM (113.5 GB, 1 NUMA part) in 5.4 s
 ds4: prompt path: the chunked pass from 96 tokens, windows of 16 below
-ds4: CUDA0 layers [0, 19]: weights 2.81 GB, experts 17.75 GB (1850 of 7680 in VRAM), caches 0.07 GB, 884 MiB free
-ds4: CUDA1 layers [20, 39] + head: weights 3.05 GB, experts 18.26 GB (1822 of 7680 in VRAM), caches 0.05 GB, 879 MiB free
-ds4: 11688 routed experts on the CPU lane (113.4 GB): 11688 copied into RAM (1 NUMA parts), the rest in place in the model's files; 64 threads
+ds4: CUDA0 layers [0, 19]: weights 2.81 GB, experts 17.71 GB (1846 of 7680 in VRAM), caches 0.07 GB, 889 MiB free
+ds4: CUDA1 layers [20, 39] + head: weights 3.05 GB, experts 18.26 GB (1822 of 7680 in VRAM), caches 0.05 GB, 881 MiB free
+ds4: 11692 routed experts on the CPU lane (113.5 GB): 11692 copied into RAM (1 NUMA parts), the rest in place in the model's files; 64 threads
 maya ds4 serve: GEN <max_new> [keys] <ids>; GENI <max_new> [keys] <pictures> <ids>; STOP, QUIT
 ds4 slots: folder /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots: 0 conversation(s) kept from earlier runs (0.00 GB)
-maya ds4 serve: prompt 3447 tokens = 0 reused + 3447 read in 9663 ms (356.7 tok/s), 1 generated in 1 ms (995.01 tok/s); CPU lane 0.0% of the experts
-maya ds4 serve: prompt 3484 tokens = 3447 reused + 37 read in 782 ms (47.3 tok/s), 256 generated in 8684 ms (29.48 tok/s); CPU lane 2.2% of the experts
-maya ds4 serve: prompt 3912 tokens = 3739 reused + 173 read in 4063 ms (42.6 tok/s), 1 generated in 0 ms (3893.19 tok/s); CPU lane 2.1% of the experts
-ds4 slots: saved a 3912-token conversation (0.02 GB in RAM in 0.0 s); 1 in RAM, 0 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 3446 tokens = 0 reused + 3446 read in 9532 ms (361.5 tok/s), 1 generated in 0 ms (3637.57 tok/s); CPU lane 1.1% of the experts
-maya ds4 serve: prompt 3483 tokens = 3446 reused + 37 read in 817 ms (45.3 tok/s), 512 generated in 16185 ms (31.64 tok/s); CPU lane 2.9% of the experts
-maya ds4 serve: prompt 4165 tokens = 3994 reused + 171 read in 3236 ms (52.8 tok/s), 1 generated in 0 ms (4453.15 tok/s); CPU lane 2.8% of the experts
-ds4 slots: saved a 4165-token conversation (0.02 GB in RAM in 0.0 s); 2 in RAM, 0 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 3450 tokens = 0 reused + 3450 read in 9398 ms (367.1 tok/s), 1 generated in 0 ms (3608.95 tok/s); CPU lane 2.0% of the experts
-maya ds4 serve: prompt 3487 tokens = 3450 reused + 37 read in 807 ms (45.9 tok/s), 512 generated in 16179 ms (31.65 tok/s); CPU lane 3.1% of the experts
-maya ds4 serve: prompt 4169 tokens = 3998 reused + 171 read in 3220 ms (53.1 tok/s), 1 generated in 0 ms (4197.47 tok/s); CPU lane 3.0% of the experts
-ds4 slots: saved a 4169-token conversation (0.02 GB in RAM in 0.0 s); 3 in RAM, 0 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 3452 tokens = 0 reused + 3452 read in 9501 ms (363.3 tok/s), 1 generated in 0 ms (4186.04 tok/s); CPU lane 2.4% of the experts
-maya ds4 serve: prompt 3489 tokens = 3452 reused + 37 read in 806 ms (45.9 tok/s), 512 generated in 16407 ms (31.21 tok/s); CPU lane 3.2% of the experts
-maya ds4 serve: prompt 4170 tokens = 4000 reused + 170 read in 3226 ms (52.7 tok/s), 1 generated in 0 ms (3714.59 tok/s); CPU lane 3.2% of the experts
-ds4 slots: saved a 4170-token conversation (0.02 GB in RAM in 0.0 s); 4 in RAM, 0 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 14144 tokens = 0 reused + 14144 read in 32796 ms (431.3 tok/s), 1 generated in 0 ms (3386.51 tok/s); CPU lane 1.7% of the experts
-maya ds4 serve: prompt 14181 tokens = 14144 reused + 37 read in 829 ms (44.6 tok/s), 512 generated in 17675 ms (28.97 tok/s); CPU lane 2.2% of the experts
-maya ds4 serve: prompt 14899 tokens = 14692 reused + 207 read in 3073 ms (67.4 tok/s), 1 generated in 0 ms (4012.37 tok/s); CPU lane 2.2% of the experts
-ds4 slots: saved a 14899-token conversation (0.03 GB in RAM in 0.1 s); 4 in RAM, 1 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 14147 tokens = 0 reused + 14147 read in 32543 ms (434.7 tok/s), 1 generated in 0 ms (3480.21 tok/s); CPU lane 1.5% of the experts
-maya ds4 serve: prompt 14184 tokens = 14147 reused + 37 read in 842 ms (43.9 tok/s), 512 generated in 17621 ms (29.06 tok/s); CPU lane 1.9% of the experts
-maya ds4 serve: prompt 14904 tokens = 14695 reused + 209 read in 3071 ms (68.1 tok/s), 1 generated in 0 ms (3904.59 tok/s); CPU lane 1.9% of the experts
-ds4 slots: saved a 14904-token conversation (0.03 GB in RAM in 0.1 s); 4 in RAM, 2 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 14153 tokens = 0 reused + 14153 read in 33294 ms (425.1 tok/s), 1 generated in 0 ms (4417.18 tok/s); CPU lane 1.4% of the experts
-maya ds4 serve: prompt 14190 tokens = 14153 reused + 37 read in 855 ms (43.3 tok/s), 512 generated in 17719 ms (28.90 tok/s); CPU lane 1.7% of the experts
-maya ds4 serve: prompt 14902 tokens = 14701 reused + 201 read in 3074 ms (65.4 tok/s), 1 generated in 0 ms (3638.23 tok/s); CPU lane 1.7% of the experts
-ds4 slots: saved a 14902-token conversation (0.03 GB in RAM in 0.1 s); 4 in RAM, 3 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 26863 tokens = 0 reused + 26863 read in 56643 ms (474.3 tok/s), 1 generated in 0 ms (3237.09 tok/s); CPU lane 1.2% of the experts
-maya ds4 serve: prompt 26900 tokens = 26863 reused + 37 read in 855 ms (43.3 tok/s), 512 generated in 18132 ms (28.24 tok/s); CPU lane 1.4% of the experts
-maya ds4 serve: prompt 27580 tokens = 27411 reused + 169 read in 3223 ms (52.4 tok/s), 1 generated in 0 ms (3501.90 tok/s); CPU lane 1.4% of the experts
-ds4 slots: saved a 27580-token conversation (0.04 GB in RAM in 0.1 s); 4 in RAM, 4 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 26862 tokens = 0 reused + 26862 read in 53177 ms (505.1 tok/s), 1 generated in 0 ms (3406.47 tok/s); CPU lane 1.1% of the experts
-maya ds4 serve: prompt 26899 tokens = 26862 reused + 37 read in 868 ms (42.6 tok/s), 512 generated in 18200 ms (28.13 tok/s); CPU lane 1.2% of the experts
-maya ds4 serve: prompt 27574 tokens = 27410 reused + 164 read in 3161 ms (51.9 tok/s), 1 generated in 0 ms (4486.54 tok/s); CPU lane 1.2% of the experts
-ds4 slots: saved a 27574-token conversation (0.04 GB in RAM in 0.1 s); 4 in RAM, 5 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
-maya ds4 serve: prompt 26859 tokens = 0 reused + 26859 read in 57279 ms (468.9 tok/s), 1 generated in 0 ms (4101.91 tok/s); CPU lane 1.0% of the experts
-maya ds4 serve: prompt 26896 tokens = 26859 reused + 37 read in 876 ms (42.2 tok/s), 512 generated in 18571 ms (27.57 tok/s); CPU lane 1.1% of the experts
-maya ds4 serve: prompt 27569 tokens = 27407 reused + 162 read in 2961 ms (54.7 tok/s), 1 generated in 0 ms (3554.18 tok/s); CPU lane 1.1% of the experts
+maya ds4 serve: prompt 3340 tokens = 0 reused + 3340 read in 9569 ms (349.0 tok/s), 1 generated in 1 ms (895.99 tok/s); CPU lane 0.0% of the experts
+maya ds4 serve: prompt 3377 tokens = 3340 reused + 37 read in 771 ms (48.0 tok/s), 256 generated in 8590 ms (29.80 tok/s); CPU lane 2.2% of the experts
+maya ds4 serve: prompt 3812 tokens = 3632 reused + 180 read in 3702 ms (48.6 tok/s), 1 generated in 0 ms (3724.13 tok/s); CPU lane 2.1% of the experts
+ds4 slots: saved a 3812-token conversation (0.02 GB in RAM in 0.0 s); 1 in RAM, 0 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 3343 tokens = 0 reused + 3343 read in 8363 ms (399.8 tok/s), 1 generated in 0 ms (3797.53 tok/s); CPU lane 1.1% of the experts
+maya ds4 serve: prompt 3380 tokens = 3343 reused + 37 read in 774 ms (47.8 tok/s), 512 generated in 16573 ms (30.89 tok/s); CPU lane 3.0% of the experts
+ds4 slots: saved a 3891-token conversation (0.02 GB in RAM in 0.0 s); 2 in RAM, 0 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 4065 tokens = 3380 reused + 685 read in 5771 ms (118.7 tok/s), 1 generated in 0 ms (4922.98 tok/s); CPU lane 2.8% of the experts
+ds4 slots: saved a 4065-token conversation (0.02 GB in RAM in 0.0 s); 3 in RAM, 0 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 3341 tokens = 0 reused + 3341 read in 8416 ms (397.0 tok/s), 1 generated in 0 ms (4048.44 tok/s); CPU lane 2.0% of the experts
+maya ds4 serve: prompt 3378 tokens = 3341 reused + 37 read in 779 ms (47.5 tok/s), 512 generated in 16170 ms (31.66 tok/s); CPU lane 3.1% of the experts
+ds4 slots: saved a 3889-token conversation (0.02 GB in RAM in 0.0 s); 4 in RAM, 0 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 4033 tokens = 3378 reused + 655 read in 5648 ms (116.0 tok/s), 1 generated in 0 ms (3536.58 tok/s); CPU lane 2.9% of the experts
+ds4 slots: saved a 4033-token conversation (0.02 GB in RAM in 0.1 s); 4 in RAM, 1 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 3347 tokens = 0 reused + 3347 read in 8326 ms (402.0 tok/s), 1 generated in 0 ms (4708.56 tok/s); CPU lane 2.3% of the experts
+maya ds4 serve: prompt 3384 tokens = 3347 reused + 37 read in 762 ms (48.6 tok/s), 512 generated in 16079 ms (31.84 tok/s); CPU lane 3.1% of the experts
+ds4 slots: saved a 3895-token conversation (0.02 GB in RAM in 0.0 s); 4 in RAM, 2 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 4061 tokens = 3384 reused + 677 read in 5571 ms (121.5 tok/s), 1 generated in 0 ms (3692.23 tok/s); CPU lane 2.9% of the experts
+ds4 slots: saved a 4061-token conversation (0.02 GB in RAM in 0.1 s); 4 in RAM, 3 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 13800 tokens = 0 reused + 13800 read in 30258 ms (456.1 tok/s), 1 generated in 0 ms (4094.67 tok/s); CPU lane 1.6% of the experts
+maya ds4 serve: prompt 13837 tokens = 13800 reused + 37 read in 809 ms (45.7 tok/s), 512 generated in 17684 ms (28.95 tok/s); CPU lane 2.2% of the experts
+maya ds4 serve: prompt 14532 tokens = 14348 reused + 184 read in 3085 ms (59.6 tok/s), 1 generated in 0 ms (4875.22 tok/s); CPU lane 2.2% of the experts
+ds4 slots: saved a 14532-token conversation (0.03 GB in RAM in 0.1 s); 4 in RAM, 4 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 13795 tokens = 0 reused + 13795 read in 32067 ms (430.2 tok/s), 1 generated in 0 ms (3391.57 tok/s); CPU lane 1.5% of the experts
+maya ds4 serve: prompt 13832 tokens = 13795 reused + 37 read in 819 ms (45.2 tok/s), 512 generated in 17228 ms (29.72 tok/s); CPU lane 1.8% of the experts
+maya ds4 serve: prompt 14533 tokens = 14343 reused + 190 read in 3162 ms (60.1 tok/s), 1 generated in 0 ms (3322.93 tok/s); CPU lane 1.8% of the experts
+ds4 slots: saved a 14533-token conversation (0.03 GB in RAM in 0.1 s); 4 in RAM, 5 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 13796 tokens = 0 reused + 13796 read in 29782 ms (463.2 tok/s), 1 generated in 0 ms (3455.66 tok/s); CPU lane 1.4% of the experts
+maya ds4 serve: prompt 13833 tokens = 13796 reused + 37 read in 843 ms (43.9 tok/s), 512 generated in 17266 ms (29.65 tok/s); CPU lane 1.7% of the experts
+maya ds4 serve: prompt 14530 tokens = 14344 reused + 186 read in 2974 ms (62.5 tok/s), 1 generated in 0 ms (4429.11 tok/s); CPU lane 1.7% of the experts
+ds4 slots: saved a 14530-token conversation (0.03 GB in RAM in 0.0 s); 4 in RAM, 6 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 27108 tokens = 0 reused + 27108 read in 53130 ms (510.2 tok/s), 1 generated in 0 ms (4137.38 tok/s); CPU lane 1.2% of the experts
+maya ds4 serve: prompt 27145 tokens = 27108 reused + 37 read in 863 ms (42.9 tok/s), 512 generated in 17888 ms (28.62 tok/s); CPU lane 1.4% of the experts
+maya ds4 serve: prompt 27817 tokens = 27656 reused + 161 read in 3262 ms (49.4 tok/s), 1 generated in 0 ms (3421.62 tok/s); CPU lane 1.4% of the experts
+ds4 slots: saved a 27817-token conversation (0.04 GB in RAM in 0.1 s); 4 in RAM, 7 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 27110 tokens = 0 reused + 27110 read in 54763 ms (495.0 tok/s), 1 generated in 0 ms (5147.50 tok/s); CPU lane 1.0% of the experts
+maya ds4 serve: prompt 27147 tokens = 27110 reused + 37 read in 861 ms (43.0 tok/s), 512 generated in 17607 ms (29.08 tok/s); CPU lane 1.2% of the experts
+maya ds4 serve: prompt 27824 tokens = 27658 reused + 166 read in 3314 ms (50.1 tok/s), 1 generated in 0 ms (4529.83 tok/s); CPU lane 1.2% of the experts
+ds4 slots: saved a 27824-token conversation (0.04 GB in RAM in 0.1 s); 4 in RAM, 8 in /home/swami/Work/Projects/moe_inference_test/results/sweep-ds41/ds4-slots
+maya ds4 serve: prompt 27111 tokens = 0 reused + 27111 read in 53331 ms (508.4 tok/s), 1 generated in 0 ms (3522.75 tok/s); CPU lane 1.0% of the experts
+maya ds4 serve: prompt 27148 tokens = 27111 reused + 37 read in 861 ms (43.0 tok/s), 512 generated in 18833 ms (27.19 tok/s); CPU lane 1.1% of the experts
+maya ds4 serve: prompt 27822 tokens = 27659 reused + 163 read in 3413 ms (47.8 tok/s), 1 generated in 0 ms (3315.54 tok/s); CPU lane 1.1% of the experts

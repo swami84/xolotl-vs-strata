@@ -5,10 +5,9 @@ MoE inference engine. This repo measures whether swapping Strata's engine for Xo
 on the same machine. For Qwen3.8-Flash-Next, the model, quant, pack, MTP draft, expert profile and flags are all
 unchanged. DeepSeek-V4.1-Flash is a second test; see [DeepSeek-V4.1-Flash](#deepseek-v41-flash) below.
 
-**DeepSeek-V4.1-Flash, in short:** one Xolotl setting decides the result. At its default, Xolotl's DeepSeek engine
-decoded **21–25% slower** than Strata's at every prompt length. With `--tier-batch-pcie 0.25`, which Xolotl's docs
-recommend for CPUs with many cores and memory channels, it decoded **11% faster** than Strata at 14K prompt tokens
-(32.3 vs 29.0 tok/s). That second number is from one length, 3 passes.
+**DeepSeek-V4.1-Flash, in short:** with `--tier-batch-pcie 0.25` (Xolotl's advice for CPUs with many cores and
+memory channels), Xolotl's DeepSeek engine decoded **8% faster** than Strata's at 14K and 27K prompt tokens. Prefill was
+25% slower at 3.3K and 6–20% faster from 14K up. At the setting's default, Xolotl decoded about 24% slower.
 
 **Qwen3.8-Flash-Next, with identical flags:**
 
@@ -165,19 +164,17 @@ the page cache. The trade-off is RAM against disk: `ram` keeps 26.8 GiB of RAM i
 
 **Result:**
 
-- **With `--tier-batch-pcie 0.25`, Xolotl's decode is 11% faster than Strata's at 14K prompt tokens:** 32.3 ± 1.3
-  against 29.0 ± 0.2 tok/s (ratio 1.11, 95% CI 1.10–1.13). Prefill was about the same as at the default setting.
-  See [The setting that mattered](#the-setting-that-mattered---tier-batch-pcie).
-- **At the default (`--tier-batch-pcie 1.0`), Xolotl's decode is 21–25% slower at every length:** 31.5 → 24.7 tok/s
-  at 3.4K prompt tokens and 28.0 → 22.0 tok/s at 27K. Every pass on both engines wrote all 512 tokens, so the
-  answers are equal length.
-- **Prefill is 16% slower at 3.4K and 9–21% faster from 14K up** (default setting). With Xolotl's DSpark draft model
-  turned off, long-prompt prefill was faster still: 36–42% ahead of Strata.
-- **DSpark helped Xolotl's decode only at 3.4K** (24.7 vs 21.4 tok/s, default setting) and cost it prefill from 14K
-  up. Strata turned DSpark off by itself on this machine (see below).
-
-The charts and the full sweep tables below are for the default setting. The `--tier-batch-pcie` runs covered 14K
-prompts only.
+- **Decode is 8% faster on Xolotl at 14K and 27K prompt tokens:** 29.5 → 31.9 tok/s at 14K (ratio 1.08, 95% CI
+  1.05–1.12) and 28.3 → 30.5 tok/s at 27K (1.08, 1.04–1.12). Every pass on both engines wrote all 512 tokens, so
+  the answers are equal length.
+- **At 3.3K, Xolotl's decode averaged 40.7 tok/s against 31.5, but that number isn't reliable.** Its three passes ran
+  at 47.8, 45.3 and 29.1 tok/s, so the CI (0.93–1.52) includes no gain at all. The spread comes from DSpark, Xolotl's
+  draft model, whose speedup depends on how much of each answer it guesses right.
+- **Prefill is 25% slower at 3.3K and 6–20% faster from 14K up.** With DSpark turned off, long-prompt prefill was
+  34–39% ahead of Strata, but decode fell to about 20 tok/s.
+- **One Xolotl setting decides the decode result: `--tier-batch-pcie`.** At its default (1.0), Xolotl decoded about
+  24% slower than Strata in an earlier run. All results here use 0.25. See
+  [The setting that mattered](#the-setting-that-mattered---tier-batch-pcie).
 
 ![DeepSeek prefill and decode speed vs prompt length](docs/ds41_speed_vs_context.png)
 
@@ -196,19 +193,19 @@ where the flags allow it.
 | Xolotl | `ds41_generate` from commit `8486ead`, built for sm_86, run through Xolotl's `tools/v41/serve/serve_ds41.py` and `ds41-engine.sh` |
 | GPUs / CPU / RAM | Same machine as the Qwen test. Both engines split the 40 layers across the two cards, layers 0–19 and 20–39 |
 
-**Strata**: the config its setup wrote, unchanged except for the port.
+**Strata**: the config its setup wrote, with image input turned off (`--vision off`, setup wrote `on`) because
+Xolotl's engine can't read images from this model's files.
 
 ```
---max-context 131072 --eos 1 --vision on --dspark auto --dspark-conf 0.65 --tp 2 --reserve-mib 900
+--max-context 131072 --eos 1 --vision off --dspark auto --dspark-conf 0.65 --tp 2 --reserve-mib 900
 ```
 
-**Xolotl**: Xolotl's serve config (`tools/v41/serve/strata-ds41.json`), with three changes so the output matches
-Strata's more closely.
+**Xolotl**: Xolotl's serve config (`tools/v41/serve/strata-ds41.json`), with these changes.
 
 ```
 --backend cuda --experts gpu --engram <Engram-IQ4_NL.gguf> --rank configs/ds41-rank.bin
 --ctx 131072 --stop 1 --arena-adapt --arena-gib 150 --route-bias 0 --route-bias-file 0
---prompt-batch 12288 --layer-split auto
+--prompt-batch 12288 --layer-split auto --tier-batch-pcie 0.25
 env STRATA_SERVE_DSPARK=<dspark-...-Q8_0.gguf>   (empty for the DSpark-off run)
 ```
 
@@ -219,20 +216,23 @@ env STRATA_SERVE_DSPARK=<dspark-...-Q8_0.gguf>   (empty for the DSpark-off run)
 - **The same expert ranking as Strata:** `--rank` decides which experts go into VRAM first. Without it the engine
   starts at layer 0, expert 0. [scripts/ds41_rank_from_profile.py](scripts/ds41_rank_from_profile.py) turns the
   expert profile in Strata's pack (routing counts per expert) into Xolotl's rank file.
+- **`--tier-batch-pcie 0.25`** instead of the default 1.0, as Xolotl's docs recommend for this kind of CPU (below).
 
 `ds41-engine.sh` adds its own defaults on top. Two of them matter here:
 
-- DSpark runs 4 tokens deep, at confidence 0.6, with the draft's experts cut to the 64 most used per layer.
+- DSpark runs 4 tokens deep, at confidence 0.6, with the draft's experts cut to the 64 most used per layer. It also
+  drafts up to 14 tokens copied from the prompt when the answer repeats it.
 - The dense weights (attention, shared expert, head) are re-quantized from Q8_0 to Q6_K at load. This saves about
   1.7 GB of VRAM for expert slots. It is lossy; Xolotl measured a small KL increase (0.2281 → 0.2306).
 
 ### Where the experts live
 
-Strata kept 3,672 of the 15,360 routed experts in VRAM, with about 880 MiB left free on each card. The other 113 GB of
-experts were read in place from the model files, through the page cache.
+Strata kept 3,668 of the 15,360 routed experts in VRAM, with about 880 MiB left free on each card. It copied the
+other 114 GB of experts into RAM at load (`--mmap-experts auto`), and computes those on the CPU.
 
 Xolotl copied all 15,360 experts into a pinned RAM arena (67.9 GiB per card's half of the layers), so nothing came
-from disk. It held 3,300–4,100 experts in VRAM, with the most just after load. It empties that cache for each prompt and refills it before decode.
+from disk. It held up to about 3,650 experts in VRAM. It empties that cache for each prompt and refills it before
+decode.
 
 Strata didn't load DSpark at all:
 
@@ -241,30 +241,30 @@ ds4: DSpark not loaded: the routed experts (149 GB) are far more than the GPU ho
 rounds read 3.3x a token's bytes and gain nothing (--dspark on loads it anyway)
 ```
 
-Xolotl ran DSpark at 3.1–3.3 tokens per verify pass. That gave it 15% more decode speed at 3.4K, and nothing
-measurable at 14K and 27K.
+On Xolotl, DSpark accepted between 2.8 and 12.5 tokens per verify pass depending on the request. The high values
+come from answers that copy code from the prompt.
 
 ### Method
 
-Same probe and sweep script as the Qwen test. The differences: prompts of 3.4K, 14K and 27K tokens (the probe's
+Same probe and sweep script as the Qwen test. The differences: prompts of 3.3K, 14K and 27K tokens (the probe's
 4K/16K/32K targets), **3 passes** per length, and **512-token** answers. Each server started once and ran one
-discarded warm-up pass, and the configs ran one after another. 27 of 27 passes succeeded.
+discarded warm-up pass, and the three configs ran one after another in one session. 27 of 27 passes succeeded.
 
 ### Prefill (tokens/s, mean ± 95% CI)
 
 | Prompt | Strata | Xolotl, DSpark on | / Strata | Xolotl, DSpark off | / Strata |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 3.4K | 364 ± 7 | 307 ± 36 | **0.84** (0.81–0.89) | 293 ± 20 | 0.80 (0.79–0.83) |
-| 14K | 430 ± 12 | 470 ± 19 | **1.09** (1.07–1.11) | 613 ± 41 | 1.42 (1.39–1.46) |
-| 27K | 483 ± 49 | 585 ± 30 | **1.21** (1.16–1.26) | 656 ± 49 | 1.36 (1.30–1.42) |
+| 3.3K | 400 ± 6 | 298 ± 49 | **0.75** (0.70–0.80) | 312 ± 33 | 0.78 (0.75–0.82) |
+| 14K | 450 ± 43 | 479 ± 17 | **1.06** (1.03–1.11) | 603 ± 84 | 1.34 (1.26–1.43) |
+| 27K | 505 ± 21 | 607 ± 77 | **1.20** (1.16–1.27) | 703 ± 66 | 1.39 (1.33–1.44) |
 
 ### Decode (tokens/s, mean ± 95% CI, 512 tokens every pass)
 
 | Prompt | Strata | Xolotl, DSpark on | / Strata | Xolotl, DSpark off | / Strata |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 3.4K | 31.5 ± 0.6 | 24.7 ± 4.6 | **0.78** (0.73–0.85) | 21.4 ± 0.5 | 0.68 (0.67–0.69) |
-| 14K | 29.0 ± 0.2 | 22.1 ± 1.4 | **0.76** (0.74–0.77) | 21.5 ± 3.2 | 0.74 (0.70–0.79) |
-| 27K | 28.0 ± 0.8 | 22.0 ± 4.1 | **0.79** (0.74–0.85) | 21.0 ± 3.3 | 0.75 (0.71–0.80) |
+| 3.3K | 31.5 ± 1.2 | 40.7 ± 25.2 | 1.29 (0.93–1.52) | 20.9 ± 3.0 | 0.66 (0.63–0.70) |
+| 14K | 29.5 ± 1.0 | 31.9 ± 2.4 | **1.08** (1.05–1.12) | 20.0 ± 2.6 | 0.68 (0.65–0.72) |
+| 27K | 28.3 ± 2.4 | 30.5 ± 1.2 | **1.08** (1.04–1.12) | 19.7 ± 2.6 | 0.70 (0.66–0.74) |
 
 All numbers are in [results/sweep-ds41/summary.csv](results/sweep-ds41/summary.csv), and each pass has its own JSON
 under `results/sweep-ds41/<config>/`.
@@ -276,56 +276,54 @@ computes it on the CPU. `--tier-batch-pcie` is the share sent over PCIe for batc
 DSpark decode and verify step. At the default of 1.0 the CPU never computes experts. Xolotl's docs
 ([DEEPSEEK_V41.md](https://github.com/Indras-Mirror/Xolotl/blob/main/docs/DEEPSEEK_V41.md)) say to set it low on
 CPUs with many cores and memory channels, and to sweep 1.0, 0.5 and 0.0. This machine's EPYC 7C13 has 64 cores and
-8 DDR4 channels. A [Reddit post](https://www.reddit.com/r/LocalLLaMA/comments/1xlec67/getting_incredible_results_with_a_single_rtx/)
-running the same engine on a 64-core Threadripper used 0.25.
+8 DDR4 channels. A Reddit post running the same engine on a 64-core Threadripper used 0.25 (see
+[References](#references)).
 
-Same config as the DSpark-on run above, plus `--tier-batch-pcie`. Prompts of 14K tokens, 3 passes, 512-token answers:
+Xolotl with DSpark on, prompts of 14K tokens, 3 passes, 512-token answers. These ran in a separate session before
+the main sweep, with the same settings otherwise:
 
-| `--tier-batch-pcie` | Prefill (tok/s) | / Strata | Decode (tok/s) | / Strata |
-| ---: | ---: | ---: | ---: | ---: |
-| Strata (reference) | 430 ± 12 | | 29.0 ± 0.2 | |
-| 1.0 (default) | 470 ± 19 | 1.09 (1.07–1.11) | 22.1 ± 1.4 | 0.76 (0.74–0.77) |
-| 0.5 | 454 ± 47 | 1.05 (1.02–1.10) | 31.4 ± 9.1 | 1.08 (0.98–1.22) |
-| **0.25** | 477 ± 86 | 1.11 (1.02–1.17) | **32.3 ± 1.3** | **1.11** (1.10–1.13) |
-| 0 | 461 ± 25 | 1.07 (1.05–1.09) | 26.7 ± 1.1 | 0.92 (0.90–0.93) |
+| `--tier-batch-pcie` | Prefill (tok/s) | Decode (tok/s) |
+| ---: | ---: | ---: |
+| 1.0 (default) | 470 ± 19 | 22.1 ± 1.4 |
+| 0.5 | 454 ± 47 | 31.4 ± 9.1 |
+| **0.25** | 477 ± 86 | **32.3 ± 1.3** |
+| 0 | 461 ± 25 | 26.7 ± 1.1 |
 
 - **0.25 was best and the most consistent:** 31.9–32.9 tok/s across its passes. 0.5 averaged close but swung from
   28.4 to 35.5. At 0, where the CPU computes every expert that isn't in VRAM, decode fell back to 26.7. The best
   split uses both the CPU and PCIe.
-- **Prefill didn't change** beyond noise. The ±86 at 0.25 comes from one slow first pass (437 against 497–498).
-- **Decode went from 0.76× to 1.11× Strata** without any lossy setting: routing stays exact and the KV cache stays
-  16-bit.
+- **Prefill didn't change** beyond noise.
+- **At the default, Xolotl was about 24% slower than Strata**: Strata decoded 29.0 tok/s at 14K in that session.
+  None of the gain needs a lossy setting.
+- **It doesn't apply without DSpark.** Without a draft model, decode runs one token at a time, and that path uses
+  `--pcie` (default 0.75) instead. That's why the DSpark-off run decoded at about 20 tok/s with or without this
+  setting. `--pcie` wasn't tuned here.
 
-These three configs ran in a separate server session after the main sweep, so the Strata and 1.0 rows come from the
-earlier session. Data: `results/tbp-ds41/`.
+Data: `results/tbp-ds41/` (`ds41-xolotl-tbp1` is the 1.0 run).
 
 ### Reading the DeepSeek results
 
-- **Xolotl's slower decode at the default came from `--tier-batch-pcie`.** Both engines held about the same number
-  of experts in VRAM (3,672 against 3,300–4,100), so VRAM wasn't the difference. Moving part of the RAM-held experts
-  to the CPU took Xolotl from 22.1 to 32.3 tok/s at 14K.
+- **With `--tier-batch-pcie` set for this CPU, Xolotl decodes a little faster than Strata** at 14K and 27K. Both
+  engines held about the same number of experts in VRAM (3,668 against up to about 3,650), so the difference is in
+  how each handles the rest.
+- **On Xolotl, DSpark is what makes decode fast.** Without it decode was 30–34% slower than Strata. Strata skips
+  DSpark on this machine and still decodes faster than Xolotl's no-DSpark run.
 - **Xolotl's prefill gain grows with prompt length**, as it did on Qwen. Its prompt path runs a 12,288-token
   layer-major batch.
 - **DSpark costs Xolotl prefill.** Its 4.4 GB of draft weights sit on the card. With DSpark off, the 14K and 27K
-  prompts read 30% and 12% faster, and decode lost only about 1 tok/s at those lengths.
-- **Strata's choice to skip DSpark held up at the default setting.** Xolotl's DSpark-on and DSpark-off decode were
-  the same within the CIs from 14K up. DSpark off wasn't retested at `--tier-batch-pcie 0.25`.
+  prompts read 26% and 16% faster.
 
 ### DeepSeek caveats
 
-- **The settings aren't identical.** Strata's config has image input on (`--vision on`). Xolotl's has it off,
-  because Xolotl's server refuses images with ISTA-DASLab's files (they lack the router's image bias). Xolotl
-  re-quantizes the dense weights to Q6_K and Strata doesn't. Strata's flags for its own KV cache and routing were
-  left at its defaults.
-- **3 passes per point.** Some of Xolotl's decode CIs are wide: up to ±4.6 tok/s in the default sweep, and ±9.1 at
-  `--tier-batch-pcie 0.5`. The default-setting gap is larger than ±4.6 at every length, and the 0.25 result's CI is
-  ±1.3.
-- **`--tier-batch-pcie 0.25` was measured at 14K only.** It wasn't run at 3.4K or 27K, or with DSpark off. Strata
-  wasn't tuned either: its config is what its setup wrote.
+- **The settings aren't identical.** Xolotl re-quantizes the dense weights to Q6_K and Strata doesn't. Xolotl uses
+  DSpark and Strata doesn't. Strata's own flags were left at what its setup wrote, apart from turning images off.
+- **3 passes per point.** Xolotl's decode at 3.3K has a very wide CI (±25.2 tok/s) because DSpark's acceptance
+  varied a lot between answers. Other CIs are ±1–3 tok/s for decode.
+- **`--tier-batch-pcie` was tuned at 14K only**, with DSpark on. 0.25 may not be best at other lengths.
 - **Two GPUs, layer split.** Both engines split the layers across both cards. Xolotl's published DeepSeek numbers are
   on one card; single-card runs weren't tested here.
-- **Load time isn't compared.** The page cache was warm from the download and from the earlier runs. Time to first
-  answer was 24 s for Strata, 48 s for Xolotl with DSpark, and 30 s without.
+- **Load time isn't compared.** The page cache was warm from earlier runs. Time to first answer was 36 s for Strata,
+  46 s for Xolotl with DSpark, and 31 s without.
 - **A different quant from the old Strata setup.** The machine previously ran Unsloth's UD-Q8_K_XL. Xolotl's engine
   can't read that set's MXFP8 Engram table, so both engines used ISTA-DASLab's IQ2_XS here.
 
@@ -402,7 +400,8 @@ it.
    ```
 
    The `--tier-batch-pcie` test uses `CONFIGS="ds41-xolotl-tbp0 ds41-xolotl-tbp025 ds41-xolotl-tbp05" CONTEXTS=16000
-   SWEEP_OUT=$PWD/results/tbp-ds41` with the same other settings.
+   SWEEP_OUT=$PWD/results/tbp-ds41` with the same other settings. For the 1.0 row, drop `--tier-batch-pcie` from a
+   copy of `configs/ds41-xolotl.json`.
 
 5. Make the plots and `summary.csv`.
 
@@ -429,7 +428,19 @@ configs/                  the configs used here (ds41-* = DeepSeek; *.bench = wh
 docs/                     the charts (ds41_* = DeepSeek)
 results/sweep/            Qwen context sweep: per-pass JSON, engine logs, summary.csv
 results/sweep-ds41/       DeepSeek context sweep, same layout
-results/tbp-ds41/         DeepSeek --tier-batch-pcie 0 / 0.25 / 0.5 at 14K
+results/tbp-ds41/         DeepSeek --tier-batch-pcie 0 / 0.25 / 0.5 / 1.0 at 14K
 results/ds41-setup.log    Strata's DeepSeek download and pack build
 results/2026-11-0*/       earlier 14K-only sessions
 ```
+
+## References
+
+- [Xolotl](https://github.com/Indras-Mirror/Xolotl) and its DeepSeek-V4.1 notes,
+  [docs/DEEPSEEK_V41.md](https://github.com/Indras-Mirror/Xolotl/blob/main/docs/DEEPSEEK_V41.md) (`--tier-batch-pcie`,
+  routing bias, ISTA-DASLab GGUFs)
+- [Strata](https://github.com/Niko1221/Strata)
+- [ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF),
+  the DeepSeek quant used here
+- r/LocalLLaMA: [Getting incredible results with a single RTX 3090ti and 128gb of ram](https://www.reddit.com/r/LocalLLaMA/comments/1xlec67/getting_incredible_results_with_a_single_rtx/).
+  It runs Xolotl on one RTX 3090 Ti with Xolotl's own XQ quant, `--tier-batch-pcie 0.25`, `--kv-fp4` and routing
+  bias. Its `--tier-batch-pcie` setting led to the test in this repo's DeepSeek section.

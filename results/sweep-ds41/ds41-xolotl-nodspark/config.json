@@ -23,7 +23,9 @@
   "--route-bias-file",
   "0",
   "--prompt-batch",
-  "12288"
+  "12288",
+  "--tier-batch-pcie",
+  "0.25"
  ],
  "cwd": "/home/swami/Work/Projects/Xolotl",
  "tokenizer": "/home/swami/Work/Courses/llm_testing/Strata-data/packs/deepseek-v4.1-flash-ist-das-2.25bpw/tokenizer",

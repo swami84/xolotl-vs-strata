@@ -1,4 +1,4 @@
-[strata] 2026-11-09 20:54:04 engine started: /home/swami/Work/Projects/Xolotl/tools/v41/serve/ds41-engine.sh --serve -m /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-IST-DAS-2.25bpw/DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ2_XS-00001-of-00004.gguf --backend cuda --experts gpu --engram /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf --rank /home/swami/Work/Projects/moe_inference_test/configs/ds41-rank.bin --ctx 131072 --stop 1 --arena-adapt --arena-gib 150 --route-bias 0 --route-bias-file 0 --prompt-batch 12288 --layer-split auto
+[strata] 2026-11-09 22:57:41 engine started: /home/swami/Work/Projects/Xolotl/tools/v41/serve/ds41-engine.sh --serve -m /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-IST-DAS-2.25bpw/DeepSeek-V4.1-Flash-1017-GSQ-RCO-IQ2_XS-00001-of-00004.gguf --backend cuda --experts gpu --engram /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/DeepSeek-V4.1-Flash-Engram-IQ4_NL.gguf --rank /home/swami/Work/Projects/moe_inference_test/configs/ds41-rank.bin --ctx 131072 --stop 1 --arena-adapt --arena-gib 150 --route-bias 0 --route-bias-file 0 --prompt-batch 12288 --tier-batch-pcie 0.25 --layer-split auto
 ggml_cuda_init: found 2 CUDA devices (Total VRAM: 48245 MiB):
   Device 0: NVIDIA GeForce RTX 3090, compute capability 8.6, VMM: yes, VRAM: 24121 MiB
   Device 1: NVIDIA GeForce RTX 3090, compute capability 8.6, VMM: yes, VRAM: 24124 MiB
@@ -14,287 +14,287 @@ enc-skip: cut at layer 20 (last kv source), replay window 2560 (reach 2560)
 ds41: stage 0 layers [0,20) CUDA device 0
 ds41: stage 1 layers [20,40) CUDA device 1
 arena: transparent huge pages off (STRATA_ARENA_THP)
-arena: pinned while filled (STRATA_ARENA_PIPE: 68 pieces of ~1024 MiB, 8 readers, 4 registrars, 0 prefault, 4 KB pages), filled in 15.6 s, registered in 0.6 s after the fill (registrations 22.0 s summed)
+arena: pinned while filled (STRATA_ARENA_PIPE: 68 pieces of ~1024 MiB, 8 readers, 4 registrars, 0 prefault, 4 KB pages), filled in 14.9 s, registered in 0.5 s after the fill (registrations 18.9 s summed)
 arena: transparent huge pages off (STRATA_ARENA_THP)
-arena: pinned while filled (STRATA_ARENA_PIPE: 71 pieces of ~1024 MiB, 8 readers, 4 registrars, 0 prefault, 4 KB pages), filled in 16.4 s, registered in 0.3 s after the fill (registrations 20.1 s summed)
-tier: 0 experts in VRAM, 0 on the remote card (0.0 GiB), 15360 in the RAM arena (67.9 GiB per stage), 0 file tier; seeded in 32.9 s
-loaded in 40.4 s: 40 layers, ctx 131072, prefill chunk 0, experts gpu, 10 classes
+arena: pinned while filled (STRATA_ARENA_PIPE: 71 pieces of ~1024 MiB, 8 readers, 4 registrars, 0 prefault, 4 KB pages), filled in 15.8 s, registered in 0.1 s after the fill (registrations 11.8 s summed)
+tier: 0 experts in VRAM, 0 on the remote card (0.0 GiB), 15360 in the RAM arena (67.9 GiB per stage), 0 file tier; seeded in 31.3 s
+loaded in 38.8 s: 40 layers, ctx 131072, prefill chunk 0, experts gpu, 10 classes
 
-DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.4 s)serve: VRAM ready seed -> 3675 experts in VRAM, 15360 arena (seed 1.78 s)
+DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.4 s)serve: VRAM ready seed -> 3658 experts in VRAM, 15360 arena (seed 2.00 s)
 serve: ready (ctx 131072, prefill chunk 1)
-serve: reuse lcp=0 park=0 lp=0 hist=0 snap=-1 prompt=3450 -> reused=0
+serve: reuse lcp=0 park=0 lp=0 hist=0 snap=-1 prompt=3357 -> reused=0
 serve: batch path threshold 128 new tokens (the arena holds every expert; file-tier experts 0)
-serve: cache kept for a 3450-token batch (1672 tail slots out, 2003 experts stay)
+serve: cache kept for a 3357-token batch (1649 tail slots out, 2009 experts stay)
 arena rebalance: on (conversation-adaptive arena, reads in the idle NVMe time)
-serve: VRAM 8.55 GiB free -> prompt batch 3498 (of 12288)
-enc-skip: first batch B=3450, cut=512 (phase A 512 cols, phase B 2938)
-chunk prestage: 0.42 GiB device region
-serve: cache regrown: 859 experts back (0 from the file) in 474 ms
-serve: keep-cache regrow fail (the driver has no VRAM for another expert-cache segment, 0.04 GiB free) - re-seed needed
+serve: VRAM 8.42 GiB free -> prompt batch 3364 (of 12288)
+enc-skip: first batch B=3357, cut=512 (phase A 512 cols, phase B 2845)
+chunk prestage: 0.39 GiB device region
+serve: cache regrown: 849 experts back (0 from the file) in 568 ms
+serve: keep-cache regrow fail (the driver has no VRAM for another expert-cache segment, 0.01 GiB free) - re-seed needed
 serve: keep-cache regrow stage 1: regrow_cache: grow: the driver has no VRAM for another expert-cache segment
 serve: keep-cache regrow hard-fail - re-seeding
-vram seed: 988 experts by this conversation's routing first (8.74 GiB), then the rank
-serve: prompt phases: 3450 new = 3450 batch (13.90 s: dense 4.01, experts 8.61, logits 0.02) + DSpark tail 128 from the batch (cache open 1.40 s, seed 0.03 s)
-serve: prompt 3450 tokens (0 reused, batch) in 15.34 s = 224.9 tok/s (experts 142356 hit / 0 cpu / 271644 pcie / 0 file)
+vram seed: 979 experts by this conversation's routing first (8.68 GiB), then the rank
+serve: prompt phases: 3357 new = 3357 batch (15.16 s: dense 3.91, experts 9.88, logits 0.01) + DSpark tail 128 from the batch (cache open 1.78 s, seed 0.03 s)
+serve: prompt 3357 tokens (0 reused, batch) in 16.98 s = 197.7 tok/s (experts 138862 hit / 0 cpu / 263978 pcie / 0 file)
 arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
 serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=3450 park=0 lp=0 hist=3450 snap=3450 prompt=3487 -> reused=3450
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.39 s)
-serve: prompt 3487 tokens (3450 reused, batch) in 1.40 s = 26.5 tok/s (experts 2808 hit / 0 cpu / 1632 pcie / 0 file)
+serve: reuse lcp=3357 park=0 lp=0 hist=3357 snap=3357 prompt=3394 -> reused=3357
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.68 s)
+serve: prompt 3394 tokens (3357 reused, batch) in 1.68 s = 22.0 tok/s (experts 2834 hit / 1216 cpu / 390 pcie / 0 file)
 arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 52/75 drafts accepted in 9 passes
-serve: 256 tokens in 9.85 s = 25.90 tok/s (length); experts: 32166 hit, 0 cpu, 6834 pcie, 0 file
-serve: DSpark 89 passes, 2.88 tokens/pass (all requests 2.88)
-serve: pass split 110.62 ms/pass = verify 106.02 (dense 26.72, tier 78.24, taps 0.23, logits 0.84) + sample 0.18 + draft 4.41 + other 0.01; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=3743 park=0 lp=0 hist=3743 snap=3487 prompt=3918 -> reused=3743
-serve: cache kept for a 175-token batch (1043 tail slots out, 2122 experts stay)
-serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 532 experts back (0 from the file) in 274 ms
-serve: cache regrown: 511 experts back (0 from the file) in 219 ms
-serve: prompt phases: 175 new = 175 batch (3.19 s: dense 0.24, experts 2.44, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 3918 tokens (3743 reused, batch) in 3.20 s = 54.6 tok/s (experts 10468 hit / 0 cpu / 10532 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=3447 -> reused=0
-serve: cache kept for a 3447-token batch (1705 tail slots out, 1460 experts stay)
-serve: VRAM 8.53 GiB free -> prompt batch 3476 (of 12288)
-serve: cache regrown: 871 experts back (0 from the file) in 503 ms
-serve: cache regrown: 834 experts back (0 from the file) in 363 ms
-serve: prompt phases: 3447 new = 3447 batch (10.66 s: dense 3.83, experts 5.87, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 3447 tokens (0 reused, batch) in 10.67 s = 323.0 tok/s (experts 198164 hit / 0 cpu / 215476 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=3447 park=0 lp=0 hist=3447 snap=3447 prompt=3484 -> reused=3447
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.61 s)
-serve: prompt 3484 tokens (3447 reused, batch) in 1.61 s = 22.9 tok/s (experts 2025 hit / 0 cpu / 2415 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 45/75 drafts accepted in 13 passes
-serve: 512 tokens in 20.87 s = 24.49 tok/s (length); experts: 62803 hit, 0 cpu, 12557 pcie, 0 file
-serve: DSpark 185 passes, 2.77 tokens/pass (all requests 2.80)
-serve: pass split 112.80 ms/pass = verify 108.34 (dense 22.69, tier 84.62, taps 0.21, logits 0.82) + sample 0.17 + draft 4.27 + other 0.01; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=3996 park=0 lp=0 hist=3996 snap=3484 prompt=4172 -> reused=3996
-serve: cache kept for a 176-token batch (1043 tail slots out, 2122 experts stay)
-serve: VRAM 5.51 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 532 experts back (0 from the file) in 314 ms
-serve: cache regrown: 511 experts back (0 from the file) in 266 ms
-serve: prompt phases: 176 new = 176 batch (3.92 s: dense 0.25, experts 3.07, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 4172 tokens (3996 reused, batch) in 3.94 s = 44.7 tok/s (experts 10861 hit / 0 cpu / 10259 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=3448 -> reused=0
-serve: cache kept for a 3448-token batch (1705 tail slots out, 1460 experts stay)
-serve: VRAM 8.54 GiB free -> prompt batch 3497 (of 12288)
-serve: cache regrown: 871 experts back (0 from the file) in 585 ms
-serve: cache regrown: 834 experts back (0 from the file) in 459 ms
-serve: prompt phases: 3448 new = 3448 batch (11.67 s: dense 3.83, experts 6.71, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 3448 tokens (0 reused, batch) in 11.68 s = 295.2 tok/s (experts 190209 hit / 0 cpu / 223551 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=3448 park=0 lp=0 hist=3448 snap=3448 prompt=3485 -> reused=3448
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.76 s)
-serve: prompt 3485 tokens (3448 reused, batch) in 1.76 s = 21.0 tok/s (experts 1862 hit / 0 cpu / 2578 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 57/85 drafts accepted in 16 passes
-serve: 512 tokens in 22.39 s = 22.83 tok/s (length); experts: 64583 hit, 0 cpu, 13657 pcie, 0 file
-serve: DSpark 189 passes, 2.71 tokens/pass (all requests 2.76)
-serve: pass split 118.44 ms/pass = verify 113.97 (dense 22.88, tier 90.05, taps 0.22, logits 0.83) + sample 0.17 + draft 4.30 + other 0.01; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=3997 park=0 lp=0 hist=3997 snap=3485 prompt=4169 -> reused=3997
-serve: cache kept for a 172-token batch (1043 tail slots out, 2122 experts stay)
-serve: VRAM 5.51 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 532 experts back (0 from the file) in 358 ms
-serve: cache regrown: 511 experts back (0 from the file) in 279 ms
-serve: prompt phases: 172 new = 172 batch (3.86 s: dense 0.24, experts 2.96, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 4169 tokens (3997 reused, batch) in 3.88 s = 44.4 tok/s (experts 10293 hit / 0 cpu / 10347 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=3444 -> reused=0
-serve: cache kept for a 3444-token batch (1705 tail slots out, 1460 experts stay)
-serve: VRAM 8.54 GiB free -> prompt batch 3491 (of 12288)
-serve: cache regrown: 871 experts back (0 from the file) in 512 ms
-serve: cache regrown: 834 experts back (0 from the file) in 383 ms
-serve: prompt phases: 3444 new = 3444 batch (11.35 s: dense 3.83, experts 6.53, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 3444 tokens (0 reused, batch) in 11.36 s = 303.3 tok/s (experts 182752 hit / 0 cpu / 230528 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=3444 park=0 lp=0 hist=3444 snap=3444 prompt=3481 -> reused=3444
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.53 s)
-serve: prompt 3481 tokens (3444 reused, batch) in 1.53 s = 24.2 tok/s (experts 1976 hit / 0 cpu / 2464 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 91/132 drafts accepted in 21 passes
-serve: 512 tokens in 19.28 s = 26.50 tok/s (length); experts: 63100 hit, 0 cpu, 12740 pcie, 0 file
-serve: DSpark 156 passes, 3.28 tokens/pass (all requests 2.89)
-serve: pass split 123.61 ms/pass = verify 119.08 (dense 24.17, tier 93.79, taps 0.24, logits 0.87) + sample 0.20 + draft 4.33 + other 0.01; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=3992 park=0 lp=0 hist=3992 snap=3481 prompt=4169 -> reused=3992
-serve: cache kept for a 177-token batch (1043 tail slots out, 2122 experts stay)
-serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 532 experts back (0 from the file) in 329 ms
-serve: cache regrown: 511 experts back (0 from the file) in 274 ms
-serve: prompt phases: 177 new = 177 batch (3.78 s: dense 0.25, experts 2.90, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 4169 tokens (3992 reused, batch) in 3.79 s = 46.7 tok/s (experts 10138 hit / 0 cpu / 11102 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=14169 -> reused=0
-serve: DSpark weights freed for a 14169-token batch
-serve: VRAM 15.85 GiB free -> prompt batch 11368 (of 12288)
-
-DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.5 s)vram seed: 848 experts by this conversation's routing first (7.50 GiB), then the rank
-serve: prompt phases: 14169 new = 14169 batch (24.83 s: dense 11.13, experts 13.01, logits 0.00) + DSpark tail 128 from the batch (cache open 5.13 s, seed 0.01 s)
-serve: prompt 14169 tokens (0 reused, batch) in 29.97 s = 472.7 tok/s (experts 0 hit / 0 cpu / 1700280 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=14169 park=0 lp=0 hist=14169 snap=14169 prompt=14206 -> reused=14169
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.67 s)
-serve: prompt 14206 tokens (14169 reused, batch) in 1.67 s = 22.2 tok/s (experts 2615 hit / 0 cpu / 1825 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 119/173 drafts accepted in 27 passes
-serve: 512 tokens in 23.96 s = 21.33 tok/s (length); experts: 59750 hit, 0 cpu, 16930 pcie, 0 file
-serve: DSpark 159 passes, 3.21 tokens/pass (all requests 2.96)
-serve: pass split 150.66 ms/pass = verify 146.13 (dense 26.42, tier 118.59, taps 0.24, logits 0.87) + sample 0.20 + draft 4.32 + other 0.01; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=14717 park=0 lp=0 hist=14717 snap=14206 prompt=14882 -> reused=14717
-serve: cache kept for a 165-token batch (1009 tail slots out, 1858 experts stay)
-serve: VRAM 5.46 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 517 experts back (0 from the file) in 344 ms
-serve: cache regrown: 492 experts back (0 from the file) in 279 ms
-serve: prompt phases: 165 new = 165 batch (3.72 s: dense 0.26, experts 2.83, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 14882 tokens (14717 reused, batch) in 3.73 s = 44.2 tok/s (experts 7621 hit / 0 cpu / 12179 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=14165 -> reused=0
-serve: DSpark weights freed for a 14165-token batch
-serve: VRAM 15.84 GiB free -> prompt batch 11366 (of 12288)
-
-DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.5 s)vram seed: 847 experts by this conversation's routing first (7.50 GiB), then the rank
-serve: prompt phases: 14165 new = 14165 batch (24.66 s: dense 11.18, experts 13.28, logits 0.00) + DSpark tail 128 from the batch (cache open 5.09 s, seed 0.01 s)
-serve: prompt 14165 tokens (0 reused, batch) in 29.76 s = 476.0 tok/s (experts 0 hit / 0 cpu / 1699800 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=14165 park=0 lp=0 hist=14165 snap=14165 prompt=14202 -> reused=14165
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.66 s)
-serve: prompt 14202 tokens (14165 reused, batch) in 1.66 s = 22.3 tok/s (experts 2597 hit / 0 cpu / 1843 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 68/89 drafts accepted in 17 passes
-serve: 512 tokens in 22.89 s = 22.32 tok/s (length); experts: 56602 hit, 0 cpu, 14918 pcie, 0 file
-serve: DSpark 163 passes, 3.13 tokens/pass (all requests 2.99)
-serve: pass split 140.43 ms/pass = verify 135.91 (dense 25.22, tier 109.62, taps 0.23, logits 0.84) + sample 0.20 + draft 4.32 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=14713 park=0 lp=0 hist=14713 snap=14202 prompt=14877 -> reused=14713
-serve: cache kept for a 164-token batch (1006 tail slots out, 1858 experts stay)
-serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 514 experts back (0 from the file) in 329 ms
-serve: cache regrown: 492 experts back (0 from the file) in 274 ms
-serve: prompt phases: 164 new = 164 batch (3.71 s: dense 0.26, experts 2.83, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 14877 tokens (14713 reused, batch) in 3.73 s = 44.0 tok/s (experts 9615 hit / 0 cpu / 10065 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=14170 -> reused=0
-serve: DSpark weights freed for a 14170-token batch
-serve: VRAM 15.85 GiB free -> prompt batch 11372 (of 12288)
-
-DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.5 s)vram seed: 850 experts by this conversation's routing first (7.52 GiB), then the rank
-serve: prompt phases: 14170 new = 14170 batch (25.64 s: dense 11.28, experts 13.64, logits 0.00) + DSpark tail 128 from the batch (cache open 5.06 s, seed 0.01 s)
-serve: prompt 14170 tokens (0 reused, batch) in 30.71 s = 461.4 tok/s (experts 0 hit / 0 cpu / 1700400 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=14170 park=0 lp=0 hist=14170 snap=14170 prompt=14207 -> reused=14170
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.76 s)
-serve: prompt 14207 tokens (14170 reused, batch) in 1.76 s = 21.1 tok/s (experts 2628 hit / 0 cpu / 1812 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 84/120 drafts accepted in 22 passes
-serve: 512 tokens in 22.87 s = 22.34 tok/s (length); experts: 58292 hit, 0 cpu, 14908 pcie, 0 file
-serve: DSpark 157 passes, 3.26 tokens/pass (all requests 3.03)
-serve: pass split 145.66 ms/pass = verify 141.11 (dense 26.98, tier 113.01, taps 0.25, logits 0.87) + sample 0.21 + draft 4.32 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=14719 park=0 lp=0 hist=14719 snap=14207 prompt=14879 -> reused=14719
-serve: cache kept for a 160-token batch (1011 tail slots out, 1859 experts stay)
-serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 519 experts back (0 from the file) in 335 ms
-serve: cache regrown: 492 experts back (0 from the file) in 270 ms
-serve: prompt phases: 160 new = 160 batch (3.57 s: dense 0.25, experts 2.69, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 14879 tokens (14719 reused, batch) in 3.58 s = 44.7 tok/s (experts 9575 hit / 0 cpu / 9625 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=26857 -> reused=0
-serve: DSpark weights freed for a 26857-token batch
-serve: VRAM 15.85 GiB free -> prompt batch 11370 (of 12288)
-
-DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.7 s)vram seed: 850 experts by this conversation's routing first (7.51 GiB), then the rank
-serve: prompt phases: 26857 new = 26857 batch (39.66 s: dense 20.90, experts 18.48, logits 0.00) + DSpark tail 128 from the batch (cache open 5.27 s, seed 0.01 s)
-serve: prompt 26857 tokens (0 reused, batch) in 44.94 s = 597.6 tok/s (experts 0 hit / 0 cpu / 3222840 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=26857 park=0 lp=0 hist=26857 snap=26857 prompt=26894 -> reused=26857
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.71 s)
-serve: prompt 26894 tokens (26857 reused, batch) in 1.71 s = 21.7 tok/s (experts 2577 hit / 0 cpu / 1863 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 103/155 drafts accepted in 28 passes
-serve: 512 tokens in 21.40 s = 23.88 tok/s (length); experts: 59220 hit, 0 cpu, 13500 pcie, 0 file
-serve: DSpark 167 passes, 3.07 tokens/pass (all requests 3.03)
-serve: pass split 128.16 ms/pass = verify 123.61 (dense 26.09, tier 96.44, taps 0.23, logits 0.85) + sample 0.21 + draft 4.31 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=27406 park=0 lp=0 hist=27406 snap=26894 prompt=27581 -> reused=27406
-serve: cache kept for a 175-token batch (1009 tail slots out, 1858 experts stay)
-serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 517 experts back (0 from the file) in 338 ms
-serve: cache regrown: 492 experts back (0 from the file) in 279 ms
-serve: prompt phases: 175 new = 175 batch (4.18 s: dense 0.32, experts 3.22, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 27581 tokens (27406 reused, batch) in 4.19 s = 41.7 tok/s (experts 8125 hit / 0 cpu / 12875 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=26845 -> reused=0
-serve: DSpark weights freed for a 26845-token batch
-serve: VRAM 15.84 GiB free -> prompt batch 11366 (of 12288)
-
-DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.6 s)vram seed: 850 experts by this conversation's routing first (7.51 GiB), then the rank
-serve: prompt phases: 26845 new = 26845 batch (40.66 s: dense 20.82, experts 19.57, logits 0.00) + DSpark tail 128 from the batch (cache open 5.23 s, seed 0.01 s)
-serve: prompt 26845 tokens (0 reused, batch) in 45.90 s = 584.8 tok/s (experts 0 hit / 0 cpu / 3221400 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=26845 park=0 lp=0 hist=26845 snap=26845 prompt=26882 -> reused=26845
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.73 s)
-serve: prompt 26882 tokens (26845 reused, batch) in 1.73 s = 21.4 tok/s (experts 2593 hit / 0 cpu / 1847 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 144/220 drafts accepted in 36 passes
-serve: 512 tokens in 23.84 s = 21.44 tok/s (length); experts: 63639 hit, 0 cpu, 15561 pcie, 0 file
-serve: DSpark 154 passes, 3.32 tokens/pass (all requests 3.06)
-serve: pass split 154.79 ms/pass = verify 150.24 (dense 28.06, tier 121.03, taps 0.26, logits 0.90) + sample 0.20 + draft 4.33 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=27393 park=0 lp=0 hist=26882 snap=26882 prompt=27574 -> reused=26882
-serve: cache kept for a 692-token batch (1118 tail slots out, 1749 experts stay)
-serve: VRAM 5.98 GiB free -> prompt batch 736 (of 12288)
-serve: cache regrown: 573 experts back (0 from the file) in 383 ms
-serve: cache regrown: 545 experts back (0 from the file) in 302 ms
-serve: prompt phases: 692 new = 692 batch (6.97 s: dense 1.18, experts 5.06, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 27574 tokens (26882 reused, batch) in 6.98 s = 99.1 tok/s (experts 41326 hit / 0 cpu / 41714 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-strata serve: conversation cache: skip parking (stage0 capture: )
-serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=26842 -> reused=0
-serve: DSpark weights freed for a 26842-token batch
-serve: VRAM 15.86 GiB free -> prompt batch 11381 (of 12288)
-
-DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.6 s)vram seed: 851 experts by this conversation's routing first (7.52 GiB), then the rank
-serve: prompt phases: 26842 new = 26842 batch (41.66 s: dense 21.05, experts 19.80, logits 0.00) + DSpark tail 128 from the batch (cache open 5.14 s, seed 0.01 s)
-serve: prompt 26842 tokens (0 reused, batch) in 46.81 s = 573.4 tok/s (experts 0 hit / 0 cpu / 3221040 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
-serve: reuse lcp=26842 park=0 lp=0 hist=26842 snap=26842 prompt=26879 -> reused=26842
-serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.75 s)
-serve: prompt 26879 tokens (26842 reused, batch) in 1.75 s = 21.1 tok/s (experts 2590 hit / 0 cpu / 1850 pcie / 0 file)
-arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
-serve: lookup 91/148 drafts accepted in 24 passes
-serve: 512 tokens in 24.74 s = 20.65 tok/s (length); experts: 58072 hit, 0 cpu, 16928 pcie, 0 file
-serve: DSpark 156 passes, 3.28 tokens/pass (all requests 3.09)
-serve: pass split 158.59 ms/pass = verify 154.05 (dense 26.50, tier 126.43, taps 0.25, logits 0.87) + sample 0.20 + draft 4.32 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
-serve: reuse lcp=27391 park=0 lp=0 hist=27391 snap=26879 prompt=27582 -> reused=27391
-serve: cache kept for a 191-token batch (1011 tail slots out, 1853 experts stay)
+serve: lookup 134/174 drafts accepted in 22 passes
+serve: 256 tokens in 8.31 s = 30.67 tok/s (length); experts: 28511 hit, 6602 cpu, 2327 pcie, 0 file
+serve: DSpark 56 passes, 4.57 tokens/pass (all requests 4.57)
+serve: pass split 148.45 ms/pass = verify 143.04 (dense 41.97, tier 99.37, taps 0.56, logits 1.14) + sample 0.46 + draft 4.94 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=3650 park=0 lp=0 hist=3650 snap=3394 prompt=3808 -> reused=3650
+serve: cache kept for a 158-token batch (1040 tail slots out, 2112 experts stay)
 serve: VRAM 5.48 GiB free -> prompt batch 512 (of 12288)
-serve: cache regrown: 518 experts back (0 from the file) in 331 ms
-serve: cache regrown: 493 experts back (0 from the file) in 289 ms
-serve: prompt phases: 191 new = 191 batch (4.34 s: dense 0.33, experts 3.36, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
-serve: prompt 27582 tokens (27391 reused, batch) in 4.35 s = 43.9 tok/s (experts 8964 hit / 0 cpu / 13956 pcie / 0 file)
+serve: cache regrown: 532 experts back (0 from the file) in 338 ms
+serve: cache regrown: 508 experts back (0 from the file) in 272 ms
+serve: prompt phases: 158 new = 158 batch (3.59 s: dense 0.22, experts 2.73, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 3808 tokens (3650 reused, batch) in 3.60 s = 43.9 tok/s (experts 9698 hit / 0 cpu / 9262 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=3361 -> reused=0
+serve: cache kept for a 3361-token batch (1688 tail slots out, 1464 experts stay)
+serve: VRAM 8.45 GiB free -> prompt batch 3399 (of 12288)
+serve: cache regrown: 863 experts back (0 from the file) in 590 ms
+serve: cache regrown: 825 experts back (0 from the file) in 455 ms
+serve: prompt phases: 3361 new = 3361 batch (12.00 s: dense 3.83, experts 6.90, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 3361 tokens (0 reused, batch) in 12.01 s = 279.8 tok/s (experts 182981 hit / 0 cpu / 220339 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=3361 park=0 lp=0 hist=3361 snap=3361 prompt=3398 -> reused=3361
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.34 s)
+serve: prompt 3398 tokens (3361 reused, batch) in 1.34 s = 27.5 tok/s (experts 2423 hit / 1568 cpu / 449 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 461/461 drafts accepted in 35 passes
+serve: 512 tokens in 10.72 s = 47.68 tok/s (length); experts: 45958 hit, 11680 cpu, 3802 pcie, 0 file
+serve: DSpark 41 passes, 12.49 tokens/pass (all requests 7.92)
+serve: pass split 261.38 ms/pass = verify 255.66 (dense 43.59, tier 209.95, taps 0.74, logits 1.38) + sample 1.04 + draft 4.66 + other 0.03; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=3910 park=0 lp=0 hist=3910 snap=3398 prompt=4065 -> reused=3910
+serve: cache kept for a 155-token batch (1040 tail slots out, 2112 experts stay)
+serve: VRAM 5.48 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 532 experts back (0 from the file) in 291 ms
+serve: cache regrown: 508 experts back (0 from the file) in 225 ms
+serve: prompt phases: 155 new = 155 batch (3.27 s: dense 0.22, experts 2.52, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 4065 tokens (3910 reused, batch) in 3.28 s = 47.2 tok/s (experts 9838 hit / 0 cpu / 8762 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=3355 -> reused=0
+serve: cache kept for a 3355-token batch (1688 tail slots out, 1464 experts stay)
+serve: VRAM 8.45 GiB free -> prompt batch 3399 (of 12288)
+serve: cache regrown: 863 experts back (0 from the file) in 487 ms
+serve: cache regrown: 825 experts back (0 from the file) in 363 ms
+serve: prompt phases: 3355 new = 3355 batch (10.51 s: dense 3.78, experts 5.79, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 3355 tokens (0 reused, batch) in 10.52 s = 319.0 tok/s (experts 183397 hit / 0 cpu / 219203 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=3355 park=0 lp=0 hist=3355 snap=3355 prompt=3392 -> reused=3355
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.19 s)
+serve: prompt 3392 tokens (3355 reused, batch) in 1.19 s = 31.0 tok/s (experts 2055 hit / 1847 cpu / 538 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 455/460 drafts accepted in 37 passes
+serve: 512 tokens in 11.30 s = 45.22 tok/s (length); experts: 47181 hit, 12236 cpu, 3943 pcie, 0 file
+serve: DSpark 43 passes, 11.91 tokens/pass (all requests 9.14)
+serve: pass split 262.81 ms/pass = verify 257.39 (dense 41.62, tier 213.64, taps 0.76, logits 1.37) + sample 0.82 + draft 4.58 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=3904 park=0 lp=0 hist=3904 snap=3392 prompt=4067 -> reused=3904
+serve: cache kept for a 163-token batch (1040 tail slots out, 2112 experts stay)
+serve: VRAM 5.48 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 532 experts back (0 from the file) in 280 ms
+serve: cache regrown: 508 experts back (0 from the file) in 225 ms
+serve: prompt phases: 163 new = 163 batch (3.15 s: dense 0.23, experts 2.39, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 4067 tokens (3904 reused, batch) in 3.16 s = 51.6 tok/s (experts 10296 hit / 0 cpu / 9264 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=3352 -> reused=0
+serve: cache kept for a 3352-token batch (1688 tail slots out, 1464 experts stay)
+serve: VRAM 8.45 GiB free -> prompt batch 3399 (of 12288)
+serve: cache regrown: 863 experts back (0 from the file) in 581 ms
+serve: cache regrown: 825 experts back (0 from the file) in 444 ms
+serve: prompt phases: 3352 new = 3352 batch (11.32 s: dense 3.78, experts 6.43, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 3352 tokens (0 reused, batch) in 11.33 s = 295.8 tok/s (experts 179974 hit / 0 cpu / 222266 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=3352 park=0 lp=0 hist=3352 snap=3352 prompt=3389 -> reused=3352
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.12 s)
+serve: prompt 3389 tokens (3352 reused, batch) in 1.12 s = 33.1 tok/s (experts 2069 hit / 1879 cpu / 492 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 78/107 drafts accepted in 17 passes
+serve: 512 tokens in 17.62 s = 29.00 tok/s (length); experts: 62365 hit, 10877 cpu, 3678 pcie, 0 file
+serve: DSpark 180 passes, 2.84 tokens/pass (all requests 5.60)
+serve: pass split 97.90 ms/pass = verify 93.31 (dense 25.76, tier 66.10, taps 0.48, logits 0.96) + sample 0.21 + draft 4.37 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=3901 park=0 lp=0 hist=3901 snap=3389 prompt=4065 -> reused=3901
+serve: cache kept for a 164-token batch (1040 tail slots out, 2112 experts stay)
+serve: VRAM 5.48 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 532 experts back (0 from the file) in 288 ms
+serve: cache regrown: 508 experts back (0 from the file) in 221 ms
+serve: prompt phases: 164 new = 164 batch (3.21 s: dense 0.23, experts 2.45, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 4065 tokens (3901 reused, batch) in 3.22 s = 50.9 tok/s (experts 9750 hit / 0 cpu / 9930 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=13811 -> reused=0
+serve: DSpark weights freed for a 13811-token batch
+serve: VRAM 15.90 GiB free -> prompt batch 11423 (of 12288)
+
+DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.5 s)vram seed: 840 experts by this conversation's routing first (7.44 GiB), then the rank
+serve: prompt phases: 13811 new = 13811 batch (24.37 s: dense 11.20, experts 12.50, logits 0.00) + DSpark tail 128 from the batch (cache open 4.78 s, seed 0.01 s)
+serve: prompt 13811 tokens (0 reused, batch) in 29.16 s = 473.6 tok/s (experts 0 hit / 0 cpu / 1657320 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=13811 park=0 lp=0 hist=13811 snap=13811 prompt=13848 -> reused=13811
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.03 s)
+serve: prompt 13848 tokens (13811 reused, batch) in 1.04 s = 35.6 tok/s (experts 2605 hit / 1393 cpu / 442 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 294/330 drafts accepted in 33 passes
+serve: 512 tokens in 15.51 s = 32.95 tok/s (length); experts: 51962 hit, 13846 cpu, 4632 pcie, 0 file
+serve: DSpark 99 passes, 5.17 tokens/pass (all requests 5.50)
+serve: pass split 156.66 ms/pass = verify 151.74 (dense 35.09, tier 115.10, taps 0.49, logits 1.06) + sample 0.36 + draft 4.54 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=14360 park=0 lp=0 hist=14360 snap=13848 prompt=14554 -> reused=14360
+serve: cache kept for a 194-token batch (1027 tail slots out, 1829 experts stay)
+serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 529 experts back (0 from the file) in 299 ms
+serve: cache regrown: 498 experts back (0 from the file) in 218 ms
+serve: prompt phases: 194 new = 194 batch (3.62 s: dense 0.30, experts 2.78, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 14554 tokens (14360 reused, batch) in 3.63 s = 53.4 tok/s (experts 9298 hit / 0 cpu / 13982 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=13818 -> reused=0
+serve: DSpark weights freed for a 13818-token batch
+serve: VRAM 15.83 GiB free -> prompt batch 11354 (of 12288)
+
+DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.5 s)vram seed: 838 experts by this conversation's routing first (7.42 GiB), then the rank
+serve: prompt phases: 13818 new = 13818 batch (23.64 s: dense 11.10, experts 12.30, logits 0.00) + DSpark tail 128 from the batch (cache open 4.78 s, seed 0.01 s)
+serve: prompt 13818 tokens (0 reused, batch) in 28.42 s = 486.2 tok/s (experts 0 hit / 0 cpu / 1658160 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=13818 park=0 lp=0 hist=13818 snap=13818 prompt=13855 -> reused=13818
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.06 s)
+serve: prompt 13855 tokens (13818 reused, batch) in 1.06 s = 35.0 tok/s (experts 2597 hit / 1373 cpu / 470 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 263/313 drafts accepted in 40 passes
+serve: 512 tokens in 16.15 s = 31.64 tok/s (length); experts: 52449 hit, 14894 cpu, 5017 pcie, 0 file
+serve: DSpark 112 passes, 4.57 tokens/pass (all requests 5.30)
+serve: pass split 144.22 ms/pass = verify 139.41 (dense 30.53, tier 107.36, taps 0.48, logits 1.04) + sample 0.33 + draft 4.46 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=14367 park=0 lp=0 hist=14367 snap=13855 prompt=14560 -> reused=14367
+serve: cache kept for a 193-token batch (1010 tail slots out, 1836 experts stay)
+serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 518 experts back (0 from the file) in 278 ms
+serve: cache regrown: 492 experts back (0 from the file) in 217 ms
+serve: prompt phases: 193 new = 193 batch (3.61 s: dense 0.30, experts 2.80, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 14560 tokens (14367 reused, batch) in 3.62 s = 53.3 tok/s (experts 9420 hit / 0 cpu / 13740 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=13819 -> reused=0
+serve: DSpark weights freed for a 13819-token batch
+serve: VRAM 15.84 GiB free -> prompt batch 11364 (of 12288)
+
+DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.5 s)vram seed: 839 experts by this conversation's routing first (7.42 GiB), then the rank
+serve: prompt phases: 13819 new = 13819 batch (23.91 s: dense 11.07, experts 12.61, logits 0.00) + DSpark tail 128 from the batch (cache open 5.10 s, seed 0.01 s)
+serve: prompt 13819 tokens (0 reused, batch) in 29.02 s = 476.2 tok/s (experts 0 hit / 0 cpu / 1658280 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=13819 park=0 lp=0 hist=13819 snap=13819 prompt=13856 -> reused=13819
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.08 s)
+serve: prompt 13856 tokens (13819 reused, batch) in 1.08 s = 34.4 tok/s (experts 2587 hit / 1402 cpu / 451 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 213/271 drafts accepted in 32 passes
+serve: 512 tokens in 16.45 s = 31.06 tok/s (length); experts: 54242 hit, 14085 cpu, 4753 pcie, 0 file
+serve: DSpark 132 passes, 3.87 tokens/pass (all requests 5.02)
+serve: pass split 124.62 ms/pass = verify 119.89 (dense 28.11, tier 90.39, taps 0.41, logits 0.98) + sample 0.28 + draft 4.43 + other 0.02; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=14367 park=0 lp=0 hist=14367 snap=13856 prompt=14557 -> reused=14367
+serve: cache kept for a 190-token batch (1010 tail slots out, 1836 experts stay)
+serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 518 experts back (0 from the file) in 269 ms
+serve: cache regrown: 492 experts back (0 from the file) in 216 ms
+serve: prompt phases: 190 new = 190 batch (3.51 s: dense 0.29, experts 2.72, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 14557 tokens (14367 reused, batch) in 3.52 s = 54.0 tok/s (experts 9114 hit / 0 cpu / 13686 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=27111 -> reused=0
+serve: DSpark weights freed for a 27111-token batch
+serve: VRAM 15.84 GiB free -> prompt batch 11364 (of 12288)
+
+DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.6 s)vram seed: 839 experts by this conversation's routing first (7.42 GiB), then the rank
+serve: prompt phases: 27111 new = 27111 batch (37.29 s: dense 20.85, experts 16.16, logits 0.00) + DSpark tail 128 from the batch (cache open 4.88 s, seed 0.01 s)
+serve: prompt 27111 tokens (0 reused, batch) in 42.17 s = 642.8 tok/s (experts 0 hit / 0 cpu / 3253320 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=27111 park=0 lp=0 hist=27111 snap=27111 prompt=27148 -> reused=27111
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.07 s)
+serve: prompt 27148 tokens (27111 reused, batch) in 1.07 s = 34.7 tok/s (experts 2565 hit / 1431 cpu / 444 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 241/306 drafts accepted in 36 passes
+serve: 512 tokens in 16.49 s = 30.98 tok/s (length); experts: 55183 hit, 13886 cpu, 4731 pcie, 0 file
+serve: DSpark 129 passes, 3.97 tokens/pass (all requests 4.85)
+serve: pass split 127.86 ms/pass = verify 122.84 (dense 31.35, tier 89.99, taps 0.47, logits 1.04) + sample 0.41 + draft 4.56 + other 0.05; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=27660 park=0 lp=0 hist=27660 snap=27148 prompt=27817 -> reused=27660
+serve: cache kept for a 157-token batch (1009 tail slots out, 1837 experts stay)
+serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 517 experts back (0 from the file) in 321 ms
+serve: cache regrown: 492 experts back (0 from the file) in 251 ms
+serve: prompt phases: 157 new = 157 batch (3.82 s: dense 0.29, experts 2.94, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 27817 tokens (27660 reused, batch) in 3.83 s = 41.0 tok/s (experts 7465 hit / 0 cpu / 11375 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=27112 -> reused=0
+serve: DSpark weights freed for a 27112-token batch
+serve: VRAM 15.84 GiB free -> prompt batch 11362 (of 12288)
+
+DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.9 s)vram seed: 840 experts by this conversation's routing first (7.42 GiB), then the rank
+serve: prompt phases: 27112 new = 27112 batch (40.22 s: dense 21.09, experts 18.83, logits 0.00) + DSpark tail 128 from the batch (cache open 5.56 s, seed 0.01 s)
+serve: prompt 27112 tokens (0 reused, batch) in 45.79 s = 592.1 tok/s (experts 0 hit / 0 cpu / 3253440 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=27112 park=0 lp=0 hist=27112 snap=27112 prompt=27149 -> reused=27112
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 0.97 s)
+serve: prompt 27149 tokens (27112 reused, batch) in 0.97 s = 38.1 tok/s (experts 2574 hit / 1428 cpu / 438 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 162/225 drafts accepted in 37 passes
+serve: 512 tokens in 16.78 s = 30.45 tok/s (length); experts: 58338 hit, 13349 cpu, 4393 pcie, 0 file
+serve: DSpark 144 passes, 3.56 tokens/pass (all requests 4.65)
+serve: pass split 116.54 ms/pass = verify 111.81 (dense 28.53, tier 81.86, taps 0.44, logits 0.98) + sample 0.26 + draft 4.44 + other 0.03; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=27661 park=0 lp=0 hist=27661 snap=27149 prompt=27816 -> reused=27661
+serve: cache kept for a 155-token batch (1009 tail slots out, 1837 experts stay)
+serve: VRAM 5.49 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 518 experts back (0 from the file) in 342 ms
+serve: cache regrown: 491 experts back (0 from the file) in 287 ms
+serve: prompt phases: 155 new = 155 batch (3.78 s: dense 0.28, experts 2.84, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 27816 tokens (27661 reused, batch) in 3.79 s = 40.9 tok/s (experts 7506 hit / 0 cpu / 11094 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+strata serve: conversation cache: skip parking (stage0 capture: )
+serve: reuse lcp=7 park=0 lp=0 hist=0 snap=-1 prompt=27121 -> reused=0
+serve: DSpark weights freed for a 27121-token batch
+serve: VRAM 15.84 GiB free -> prompt batch 11362 (of 12288)
+
+DSpark: /home/swami/Work/Courses/llm_testing/Strata-data/models/deepseek-v4.1-flash-shared/dspark-DeepSeek-V4.1-Flash-1017-Q8_0.gguf, 4.36 GB of weights on the card (3.7 s)vram seed: 840 experts by this conversation's routing first (7.42 GiB), then the rank
+serve: prompt phases: 27121 new = 27121 batch (40.96 s: dense 21.02, experts 19.67, logits 0.00) + DSpark tail 128 from the batch (cache open 5.25 s, seed 0.01 s)
+serve: prompt 27121 tokens (0 reused, batch) in 46.23 s = 586.7 tok/s (experts 0 hit / 0 cpu / 3254520 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
+serve: reuse lcp=27121 park=0 lp=0 hist=27121 snap=27121 prompt=27158 -> reused=27121
+serve: prompt phases: 37 new = 0 batch (0.00 s: dense 0.00, experts 0.00, logits 0.00) + DSpark tail 37 as passes (cache open 0.00 s, seed 1.13 s)
+serve: prompt 27158 tokens (27121 reused, batch) in 1.13 s = 32.7 tok/s (experts 2591 hit / 1388 cpu / 461 pcie / 0 file)
+arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
+serve: lookup 170/222 drafts accepted in 28 passes
+serve: 512 tokens in 17.09 s = 29.90 tok/s (length); experts: 56826 hit, 13181 cpu, 4393 pcie, 0 file
+serve: DSpark 138 passes, 3.71 tokens/pass (all requests 4.53)
+serve: pass split 123.84 ms/pass = verify 119.08 (dense 30.05, tier 87.61, taps 0.43, logits 0.99) + sample 0.28 + draft 4.45 + other 0.03; file blocked 0.00 ms/pass (0.0% of the pass)
+serve: reuse lcp=27670 park=0 lp=0 hist=27670 snap=27158 prompt=27825 -> reused=27670
+serve: cache kept for a 155-token batch (1008 tail slots out, 1838 experts stay)
+serve: VRAM 5.48 GiB free -> prompt batch 512 (of 12288)
+serve: cache regrown: 517 experts back (0 from the file) in 266 ms
+serve: cache regrown: 491 experts back (0 from the file) in 213 ms
+serve: prompt phases: 155 new = 155 batch (3.33 s: dense 0.28, experts 2.55, logits 0.00) + DSpark tail 128 from the batch (cache open 0.00 s, seed 0.01 s)
+serve: prompt 27825 tokens (27670 reused, batch) in 3.34 s = 46.4 tok/s (experts 6978 hit / 0 cpu / 11622 pcie / 0 file)
 arena rebalance: 0 swaps planned (so far 0 retired, 0 published, 0 slots re-used, 0 cancelled; skipped: cand in 0, victim gone 0, victim in VRAM 0, victim recent 0, slot small 0)
 serve: 1 tokens in 0.00 s = 0.00 tok/s (length); experts: 0 hit, 0 cpu, 0 pcie, 0 file
